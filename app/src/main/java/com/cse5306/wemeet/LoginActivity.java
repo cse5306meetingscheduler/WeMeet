@@ -1,8 +1,8 @@
 package com.cse5306.wemeet;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,7 +14,7 @@ import android.widget.Toast;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends Activity{
+public class LoginActivity extends ActionBarActivity{
     /**
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
