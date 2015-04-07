@@ -1,5 +1,6 @@
 package com.cse5306.wemeet;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -33,6 +34,7 @@ public class LoginActivity extends ActionBarActivity{
     private View mProgressView;
     private View mLoginFormView;
     Button mEmailSignInButton;
+    Button mRegisterButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,15 @@ public class LoginActivity extends ActionBarActivity{
             @Override
             public void onClick(View view) {
                 attemptLogin();
+            }
+        });
+        mRegisterButton = (Button) findViewById(R.id.register_button);
+        mRegisterButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Goto login activity
+                Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -178,7 +189,6 @@ public class LoginActivity extends ActionBarActivity{
         }
         //test
         @Override
-
         protected void onCancelled() {
             mAuthTask = null;
             showProgress(false);

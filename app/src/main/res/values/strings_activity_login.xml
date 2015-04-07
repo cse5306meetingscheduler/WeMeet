@@ -1,6 +1,7 @@
 <resources>
 
     <string name="login_heading">WeMeet - Login</string>
+    <string name="register_text">Register</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
