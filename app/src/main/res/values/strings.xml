@@ -1,7 +1,26 @@
 <resources>
     <string name="app_name">WeMeet</string>
-    <string name="title_activity_register">RegisterActivity</string>
-
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Login Activiy -->
+    <string name="title_activity_Login">WeMeet - Login</string>
+    <string name="register_text">Register</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_log_in">Log in</string>
+
+    <string name="error_invalid_credentials">Invalid credentials</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+
+    <!-- Register Activity -->
+    <string name="title_activity_register">Register</string>
+    <string name="reg_username_hint_text">Username</string>
+    <string name="reg_phone_number_hint">234 432 5648</string>
+    <string name="reg_email_hint">john@gmail.com</string>
+
+
 </resources>

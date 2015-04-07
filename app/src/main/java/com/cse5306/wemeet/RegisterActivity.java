@@ -1,17 +1,37 @@
 package com.cse5306.wemeet;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class RegisterActivity extends ActionBarActivity {
+
+    EditText mRegEmail,mRegPassword,mRegPhoneNum,mRegUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        mRegPassword = (EditText) findViewById(R.id.reg_password);
+        mRegPhoneNum = (EditText) findViewById(R.id.reg_phone_number);
+        mRegUsername = (EditText) findViewById(R.id.reg_username);
+
+        mRegEmail = (EditText) findViewById(R.id.reg_email);
+        mRegEmail.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    Toast.makeText(getApplicationContext(), "Test register", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        });
+
     }
 
 
