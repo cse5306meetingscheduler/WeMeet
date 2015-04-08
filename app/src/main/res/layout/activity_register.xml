@@ -26,6 +26,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
+            android:layout_marginTop="16dp"
             android:layout_height="match_parent">
 
             <LinearLayout
@@ -48,6 +49,7 @@
                 android:id="@+id/reg_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:hint="@string/reg_username_hint_text"
                 android:inputType="text"
                 android:maxLines="1"
@@ -58,6 +60,7 @@
                 android:id="@+id/reg_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:hint="@string/prompt_password"
                 android:inputType="textPassword"
                 android:maxLines="1"
@@ -68,6 +71,7 @@
                 android:id="@+id/reg_phone_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:hint="@string/reg_phone_number_hint"
                 android:inputType="phone"
                 android:maxLines="1"
@@ -78,6 +82,7 @@
                 android:id="@+id/reg_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:imeActionId="@+id/ime_register"
                 android:imeActionLabel="@string/register_text"
                 android:imeOptions="actionDone"
@@ -86,6 +91,26 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/reg_home_location"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content" />
+                <Button
+                    android:id="@+id/reg_fetch_home_location_btn"
+                    android:layout_width="wrap_content"
+                    android:visibility="gone"
+                    android:text="Fetch Location"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/register_user_btn"

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cse5306.wemeet.R;
+import com.cse5306.wemeet.tasks.GetCurrentLocationTask;
 import com.cse5306.wemeet.tasks.RegisterTask;
 import com.cse5306.wemeet.tasks.RegisterTaskResponse;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -32,6 +33,8 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
     LinearLayout mRegErrorLinLayout;
     TextView mRegScreenErrorTv;
     ProgressBar mRegProgressBar;
+    TextView mHomeLocationTv;
+    Button mFetchLocationBtn;
     boolean dev_id_set = false;
     GoogleCloudMessaging gcm;
     String rId = null;
@@ -48,8 +51,12 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
         mRegUsername = (EditText) findViewById(R.id.reg_username);
         mRegProgressBar = (ProgressBar) findViewById(R.id.reg_progress);
         regUserBtn = (Button) findViewById(R.id.register_user_btn);
+
+        //error handling
         mRegErrorLinLayout = (LinearLayout) findViewById(R.id.reg_error_lin_layout);
         mRegScreenErrorTv = (TextView) findViewById(R.id.reg_screen_error_tv);
+        mHomeLocationTv = (TextView) findViewById(R.id.reg_home_location);
+        mFetchLocationBtn = (Button) findViewById(R.id.reg_fetch_home_location_btn);
 
         mRegEmail = (EditText) findViewById(R.id.reg_email);
         mRegEmail.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -62,7 +69,40 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
                 return false;
             }
         });
+        // Get GCM id for this device.
+        regUserBtn.setText("Retrieving your GCM id...");
+        regUserBtn.setEnabled(false);
         getRegId();
+
+        GetCurrentLocationTask gps;
+        gps = new GetCurrentLocationTask(RegisterActivity.this);
+
+        if(gps.canGetLocation()){
+            Log.d("Reg", "loc Started");
+            mHomeLocationTv.setVisibility(View.VISIBLE);
+            mHomeLocationTv.setText(gps.getLocation().toString());
+        }else{
+            showError(true,"Turn on Location services");
+            mFetchLocationBtn.setVisibility(View.VISIBLE);
+        }
+
+        mFetchLocationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GetCurrentLocationTask gps1 = new GetCurrentLocationTask(RegisterActivity.this);
+                if(gps1.canGetLocation()){
+                    showError(false,"");
+                    mFetchLocationBtn.setVisibility(View.GONE);
+                    mHomeLocationTv.setVisibility(View.VISIBLE);
+                    mHomeLocationTv.setText(gps1.getLocation().toString());
+                }else{
+                    showError(true,"Turn on Location services");
+                    mFetchLocationBtn.setVisibility(View.VISIBLE);
+                }
+
+            }
+        });
+
         regUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,19 +113,18 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
 
     private  void attemptRegister(){
         mRegErrorLinLayout.setVisibility(View.GONE);
-        if(validateInput()) {
-            getRegId();
+        if(validateInput() && dev_id_set) {
             mRegProgressBar.setVisibility(View.VISIBLE);
             RegisterTask registerTask = new RegisterTask(mRegUsername.getText().toString(),
                                                             mRegPassword.getText().toString(),
-                                                            "gcm_id",
+                                                            regid,
                                                             "home_location",
                                                             mRegPhoneNum.getText().toString(),
                                                             mRegEmail.getText().toString());
             registerTask.response = this;
             registerTask.execute();
-        }else{
-
+        }else if(!dev_id_set){
+            showError(true,"Could not connect to GCM Server");
         }
     }
 
@@ -134,16 +173,17 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
                 //go to login screen
             }
         }catch(JSONException e){
-            e.printStackTrace();
+            showError(true, e.getMessage());
         }
         mRegProgressBar.setVisibility(View.GONE);
     }
 
     public void getRegId(){
+        mRegErrorLinLayout.setVisibility(View.GONE);
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
-                String msg = "";
+                String msg = null;
                 try {
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
@@ -158,9 +198,13 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
             }
             @Override
             protected void onPostExecute(String msg) {
-                //etRegId.setText(msg + "\n");
                 rId = msg;
-                dev_id_set = true;
+                if(msg != null){
+                    dev_id_set = true;
+                    regUserBtn.setText(getResources().getString(R.string.register_text));
+                    regUserBtn.setEnabled(true);
+                }
+
             }
         }.execute(null, null, null);
    }

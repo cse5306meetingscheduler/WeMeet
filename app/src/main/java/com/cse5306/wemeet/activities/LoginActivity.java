@@ -9,12 +9,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cse5306.wemeet.R;
+import com.cse5306.wemeet.preferences.UserPreferences;
 import com.cse5306.wemeet.tasks.UserLoginTask;
 import com.cse5306.wemeet.tasks.UserLoginTaskResponse;
 
@@ -26,23 +28,17 @@ import org.json.JSONObject;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends ActionBarActivity implements UserLoginTaskResponse {
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
+
+
     private UserLoginTask mAuthTask = null;
 
     // UI references.
+    private CheckBox mKeepLoginCb;
     private EditText mUserNameView;
     private EditText mPasswordView;
     private View mLoginProgressView;
     Button mSignInButton;
+    UserPreferences userPreferences;
     Button mRegisterButton;
     LinearLayout mLoginScreenErrorLinLayout;
     TextView mLoginScreenErrorTv;
@@ -52,8 +48,11 @@ public class LoginActivity extends ActionBarActivity implements UserLoginTaskRes
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        userPreferences = new UserPreferences(getApplicationContext());
+
         mLoginScreenErrorTv = (TextView) findViewById(R.id.login_screen_error_tv);
         mLoginScreenErrorLinLayout = (LinearLayout) findViewById(R.id.login_error_lin_layout);
+        mKeepLoginCb = (CheckBox) findViewById(R.id.reg_check_box);
 
         mUserNameView = (EditText) findViewById(R.id.username);
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -67,6 +66,12 @@ public class LoginActivity extends ActionBarActivity implements UserLoginTaskRes
                 return false;
             }
         });
+
+        if(userPreferences.getUserPrefKeepLogin()){
+            mAuthTask = new UserLoginTask(userPreferences.getUserPrefUsername(), userPreferences.getUserPrefPassword());
+            mAuthTask.response = this;
+            mAuthTask.execute();
+        }
 
         mSignInButton = (Button) findViewById(R.id.login_button);
         mSignInButton.setOnClickListener(new OnClickListener() {
@@ -151,7 +156,12 @@ public class LoginActivity extends ActionBarActivity implements UserLoginTaskRes
             if(jsonObject.getInt("success") == 0){
                 showError(true,jsonObject.getString("message"));
             }else{
-                //go to home screen
+                if(mKeepLoginCb.isChecked()){
+                    userPreferences.setUserPrefKeepLogin(true);
+                    userPreferences.setUserPrefUsername(mUserNameView.getText().toString());
+                    userPreferences.setUserPrefPassword(mPasswordView.getText().toString());
+                    //go to home screen
+                }
             }
         }catch(JSONException e){
             e.printStackTrace();

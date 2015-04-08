@@ -60,6 +60,15 @@
                 android:maxLines="1"
                 android:singleLine="true" />
 
+            <CheckBox
+                android:id="@+id/reg_check_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Keep me loggid in"
+                android:checked="false"
+                />
+
             <Button
                 android:id="@+id/login_button"
                 style="?android:textAppearanceSmall"
