@@ -6,12 +6,12 @@
     <!-- Login Activiy -->
     <string name="title_activity_Login">WeMeet - Login</string>
     <string name="register_text">Register</string>
-    <string name="prompt_email">Email</string>
+    <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
     <string name="action_log_in">Log in</string>
 
     <string name="error_invalid_credentials">Invalid credentials</string>
-    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_email">This username is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>

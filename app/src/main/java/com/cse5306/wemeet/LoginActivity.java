@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -31,11 +32,11 @@ public class LoginActivity extends ActionBarActivity{
     private UserLoginTask mAuthTask = null;
 
     // UI references.
-    private EditText mEmailView;
+    private EditText mUserNameView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    Button mEmailSignInButton;
+    Button mSignInButton;
     Button mRegisterButton;
 
     @Override
@@ -44,18 +45,21 @@ public class LoginActivity extends ActionBarActivity{
         setContentView(R.layout.activity_login);
 
         // Set up the login form.
-        mEmailView = (EditText) findViewById(R.id.email);
+        mUserNameView = (EditText) findViewById(R.id.username);
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                Toast.makeText(getApplicationContext(),"Login test",Toast.LENGTH_LONG).show();
-                return true;
+                if(actionId == R.id.ime_login || actionId == EditorInfo.IME_NULL){
+                    Toast.makeText(getApplicationContext(), "Test Login", Toast.LENGTH_LONG).show();
+                    return  true;
+                }
+                return false;
             }
         });
 
-        mEmailSignInButton = (Button) findViewById(R.id.login_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        mSignInButton = (Button) findViewById(R.id.login_button);
+        mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
@@ -86,11 +90,11 @@ public class LoginActivity extends ActionBarActivity{
         }
 
         // Reset errors.
-        mEmailView.setError(null);
+        mUserNameView.setError(null);
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
+        String username = mUserNameView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -109,13 +113,13 @@ public class LoginActivity extends ActionBarActivity{
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+        if (TextUtils.isEmpty(username)) {
+            mUserNameView.setError(getString(R.string.error_field_required));
+            focusView = mUserNameView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+        } else if (!isUsernameValid(username)) {
+            mUserNameView.setError(getString(R.string.error_invalid_email));
+            focusView = mUserNameView;
             cancel = true;
         }
 
@@ -128,14 +132,14 @@ public class LoginActivity extends ActionBarActivity{
             // progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(username, password);
             mAuthTask.execute((Void) null);
         }
     }
 
-    private boolean isEmailValid(String email) {
+    private boolean isUsernameValid(String username) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+        return username.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
@@ -157,11 +161,11 @@ public class LoginActivity extends ActionBarActivity{
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
+        private final String uname;
         private final String mPassword;
 
         UserLoginTask(String email, String password) {
-            mEmail = email;
+            uname = email;
             mPassword = password;
         }
 
@@ -176,7 +180,7 @@ public class LoginActivity extends ActionBarActivity{
                 return false;
             }
 
-            if(DUMMY_CREDENTIALS[0].equals(mEmail) && DUMMY_CREDENTIALS[1].equals(mPassword)){
+            if(DUMMY_CREDENTIALS[0].equals(uname) && DUMMY_CREDENTIALS[1].equals(mPassword)){
                 return true;
             }else{
                 return false;

@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,7 +28,10 @@ public class RegisterActivity extends ActionBarActivity {
         mRegEmail.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == R.id.ime_register || actionId == EditorInfo.IME_NULL){
                     Toast.makeText(getApplicationContext(), "Test register", Toast.LENGTH_LONG).show();
+                    return  true;
+                }
                 return false;
             }
         });

@@ -60,6 +60,7 @@
                 android:id="@+id/reg_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeActionId="@+id/ime_register"
                 android:imeActionLabel="@string/register_text"
                 android:imeOptions="actionDone"
                 android:hint="@string/reg_email_hint"
