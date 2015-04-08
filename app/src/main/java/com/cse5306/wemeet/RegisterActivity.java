@@ -3,10 +3,11 @@ package com.cse5306.wemeet;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +15,9 @@ import android.widget.Toast;
 public class RegisterActivity extends ActionBarActivity {
 
     EditText mRegEmail,mRegPassword,mRegPhoneNum,mRegUsername;
+    Button regUserBtn;
+    LinearLayout mRegErrorLinLayout;
+    TextView mRegScreenErrorTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +27,9 @@ public class RegisterActivity extends ActionBarActivity {
         mRegPassword = (EditText) findViewById(R.id.reg_password);
         mRegPhoneNum = (EditText) findViewById(R.id.reg_phone_number);
         mRegUsername = (EditText) findViewById(R.id.reg_username);
+        regUserBtn = (Button) findViewById(R.id.register_user_btn);
+        mRegErrorLinLayout = (LinearLayout) findViewById(R.id.reg_error_lin_layout);
+        mRegScreenErrorTv = (TextView) findViewById(R.id.reg_screen_error_tv);
 
         mRegEmail = (EditText) findViewById(R.id.reg_email);
         mRegEmail.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -36,28 +43,48 @@ public class RegisterActivity extends ActionBarActivity {
             }
         });
 
+        regUserBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attemptRegister();
+            }
+        });
+
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_register, menu);
-        return true;
+    private  void attemptRegister(){
+        if(validateInput()) {
+            RegisterTask registerTask = new RegisterTask("suSafdasdassiSe", "sas", "gcm_id", "asdfsdf", "ss", "aa");
+            registerTask.execute();
+        }else{
+            mRegErrorLinLayout.setVisibility(View.VISIBLE);
+            mRegScreenErrorTv.setText("Something Wrong");
+        }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    private  boolean validateInput(){
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        mRegUsername.setError(null);
+        mRegPassword.setError(null);
+        mRegEmail.setError(null);
+        mRegPhoneNum.setError(null);
+
+        if(mRegUsername.getText().toString().length() <= 7){
+            mRegUsername.setError("Invalid Username");
+            return false;
+        }else if(mRegPassword.getText().toString().length() <=7){
+            mRegPassword.setError("Invalid Password");
+            return false;
+        }else if(mRegPhoneNum.getText().toString().length() < 10  ||
+                mRegPhoneNum.getText().toString().length() > 13){
+            mRegPhoneNum.setError("Invalid Phone number");
+            return false;
+        }else if(!mRegEmail.getText().toString().contains("@") ||
+                !mRegEmail.getText().toString().contains(".")){
+            mRegEmail.setError("Invalid E-mail");
+            return false;
         }
 
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 }

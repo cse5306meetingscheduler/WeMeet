@@ -14,6 +14,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * A login screen that offers login via email/password.
@@ -159,7 +173,7 @@ public class LoginActivity extends ActionBarActivity{
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, String> {
 
         private final String uname;
         private final String mPassword;
@@ -170,29 +184,38 @@ public class LoginActivity extends ActionBarActivity{
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+        protected String doInBackground(Void... params) {
+            // Create a new HttpClient and Post Header
 
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost("link");
+            HttpResponse response = null;
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
+                // Add your data
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+                nameValuePairs.add(new BasicNameValuePair("username", uname));
+                nameValuePairs.add(new BasicNameValuePair("gcm_user", mPassword));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                // Execute HTTP Post Request
+                response = httpclient.execute(httppost);
+                //Log.d("response",EntityUtils.toString(response.getEntity()));
+                return EntityUtils.toString(response.getEntity());
+            } catch (ClientProtocolException e) {
+                // TODO Auto-generated catch block
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
             }
 
-            if(DUMMY_CREDENTIALS[0].equals(uname) && DUMMY_CREDENTIALS[1].equals(mPassword)){
-                return true;
-            }else{
-                return false;
-            }
+            return "error";
+
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final String success) {
             mAuthTask = null;
             showProgress(false);
             Toast.makeText(getApplicationContext(), String.valueOf(success), Toast.LENGTH_SHORT).show();
-            if (success) {
+            if (success.equalsIgnoreCase("error")) {
                 //finish();
 
             } else {
