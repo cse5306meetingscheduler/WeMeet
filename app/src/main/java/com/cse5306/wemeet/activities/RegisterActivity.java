@@ -1,7 +1,9 @@
-package com.cse5306.wemeet;
+package com.cse5306.wemeet.activities;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -12,17 +14,29 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cse5306.wemeet.R;
+import com.cse5306.wemeet.tasks.RegisterTask;
+import com.cse5306.wemeet.tasks.RegisterTaskResponse;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 
-public class RegisterActivity extends ActionBarActivity implements RegisterTaskResponse{
+
+public class RegisterActivity extends ActionBarActivity implements RegisterTaskResponse {
 
     EditText mRegEmail,mRegPassword,mRegPhoneNum,mRegUsername;
     Button regUserBtn;
     LinearLayout mRegErrorLinLayout;
     TextView mRegScreenErrorTv;
     ProgressBar mRegProgressBar;
+    boolean dev_id_set = false;
+    GoogleCloudMessaging gcm;
+    String rId = null;
+    String regid;
+    String PROJECT_NUMBER = "928493204730";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,19 +62,19 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
                 return false;
             }
         });
-
+        getRegId();
         regUserBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 attemptRegister();
             }
         });
-
     }
 
     private  void attemptRegister(){
         mRegErrorLinLayout.setVisibility(View.GONE);
         if(validateInput()) {
+            getRegId();
             mRegProgressBar.setVisibility(View.VISIBLE);
             RegisterTask registerTask = new RegisterTask(mRegUsername.getText().toString(),
                                                             mRegPassword.getText().toString(),
@@ -124,4 +138,30 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
         }
         mRegProgressBar.setVisibility(View.GONE);
     }
+
+    public void getRegId(){
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg = "";
+                try {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
+                    }
+                    regid = gcm.register(PROJECT_NUMBER);
+                    msg = regid;
+                    Log.i("GCM", msg);
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+                }
+                return msg;
+            }
+            @Override
+            protected void onPostExecute(String msg) {
+                //etRegId.setText(msg + "\n");
+                rId = msg;
+                dev_id_set = true;
+            }
+        }.execute(null, null, null);
+   }
 }

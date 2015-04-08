@@ -1,7 +1,6 @@
-package com.cse5306.wemeet;
+package com.cse5306.wemeet.tasks;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -18,47 +17,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Sathvik on 07/04/15.
+ * Created by Sathvik on 08/04/15.
  */
-public class RegisterTask extends AsyncTask<String,String,String> {
+public class UserLoginTask extends AsyncTask<String,String,String> {
 
-    RegisterTaskResponse response;
-    String username,password,gcm_id,home_location,phone_number,email_id;
+    public UserLoginTaskResponse response=null;
+    private final String uname;
+    private final String mPassword;
 
-    public RegisterTask(String username, String password, String gcm_id, String home_location, String phone_number, String email_id) {
-        this.username = username;
-        this.password = password;
-        this.gcm_id = gcm_id;
-        this.home_location = home_location;
-        this.phone_number = phone_number;
-        this.email_id = email_id;
+    public UserLoginTask(String email, String password) {
+        this.uname = email;
+        this.mPassword = password;
     }
 
     @Override
     protected String doInBackground(String... params) {
-
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("https://wemeet-sathvik1709.c9.io/register.php");
+        HttpPost httppost = new HttpPost("https://wemeet-sathvik1709.c9.io/login.php");
         HttpResponse response = null;
         try {
             // Add your data
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-            nameValuePairs.add(new BasicNameValuePair("username", username));
-            nameValuePairs.add(new BasicNameValuePair("password", password));
-            nameValuePairs.add(new BasicNameValuePair("gcm_id", gcm_id));
-            nameValuePairs.add(new BasicNameValuePair("home_location", home_location));
-            nameValuePairs.add(new BasicNameValuePair("phone_number", phone_number));
-            nameValuePairs.add(new BasicNameValuePair("email_id", email_id));
+            nameValuePairs.add(new BasicNameValuePair("username", uname));
+            nameValuePairs.add(new BasicNameValuePair("password", mPassword));
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
             response = httpclient.execute(httppost);
 
             return EntityUtils.toString(response.getEntity());
-
         } catch (ClientProtocolException e) {
-            e.printStackTrace();
+            // TODO Auto-generated catch block
         } catch (IOException e) {
-            e.printStackTrace();
+            // TODO Auto-generated catch block
         }
 
         return "error";
@@ -68,6 +57,5 @@ public class RegisterTask extends AsyncTask<String,String,String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         response.processFinish(s);
-        Log.d("res",s);
     }
 }

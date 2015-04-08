@@ -1,4 +1,4 @@
-package com.cse5306.wemeet;
+package com.cse5306.wemeet.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +14,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cse5306.wemeet.R;
+import com.cse5306.wemeet.tasks.UserLoginTask;
+import com.cse5306.wemeet.tasks.UserLoginTaskResponse;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,7 +25,7 @@ import org.json.JSONObject;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends ActionBarActivity implements UserLoginTaskResponse{
+public class LoginActivity extends ActionBarActivity implements UserLoginTaskResponse {
     /**
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
