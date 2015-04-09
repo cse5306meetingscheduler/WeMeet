@@ -42,7 +42,7 @@
         </activity>
 
         <receiver
-            android:name="com.cse5306.wemeet.gcm.GcmBroadcastReceiver"
+            android:name=".gcm.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -51,12 +51,16 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="com.cse5306.wemeet.gcm.GcmMessageHandler" />
+        <service android:name=".gcm.GcmMessageHandler" />
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+        <activity
+            android:name=".activities.UserHomeScreenActivity"
+            android:label="@string/title_activity_user_home_screen" >
+        </activity>
     </application>
 
 </manifest>

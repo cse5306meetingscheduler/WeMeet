@@ -21,6 +21,7 @@
     <string name="reg_username_hint_text">Username</string>
     <string name="reg_phone_number_hint">234 432 5648</string>
     <string name="reg_email_hint">john@gmail.com</string>
+    <string name="title_activity_user_home_screen">Your Meetings</string>
 
 
 </resources>

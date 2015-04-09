@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -39,6 +40,7 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
     private EditText mPasswordView;
     private View mLoginProgressView;
     Button mSignInButton;
+    ViewGroup mLoginForm;
     UserPreferences userPreferences;
     Button mRegisterButton;
     LinearLayout mLoginScreenErrorLinLayout;
@@ -52,6 +54,7 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
         hideKeyboard();
         userPreferences = new UserPreferences(getApplicationContext());
 
+        mLoginForm = (ViewGroup) findViewById(R.id.login_form);
         mLoginScreenErrorTv = (TextView) findViewById(R.id.login_screen_error_tv);
         mLoginScreenErrorLinLayout = (LinearLayout) findViewById(R.id.login_error_lin_layout);
         mKeepLoginCb = (CheckBox) findViewById(R.id.reg_check_box);
@@ -70,6 +73,7 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
         });
 
         if(userPreferences.getUserPrefKeepLogin()){
+            mLoginForm.setVisibility(View.GONE);
             mAuthTask = new UserLoginTask(userPreferences.getUserPrefUsername(), userPreferences.getUserPrefPassword());
             mAuthTask.response = this;
             mAuthTask.execute();
@@ -159,15 +163,18 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
             if(jsonObject.getInt("success") == 0){
                 showError(true,jsonObject.getString("message"));
                 mLoginProgressView.setVisibility(View.GONE);
+                mLoginForm.setVisibility(View.VISIBLE);
             }else if(jsonObject.getInt("success") == 1){
-                Toast.makeText(getApplicationContext(),jsonObject.getString("message"),Toast.LENGTH_LONG).show();
                 if(mKeepLoginCb.isChecked()){
                     userPreferences.setUserPrefKeepLogin(true);
                     userPreferences.setUserPrefUsername(mUserNameView.getText().toString());
                     userPreferences.setUserPrefPassword(mPasswordView.getText().toString());
-
                 }
                 mLoginProgressView.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(),jsonObject.getString("message"),Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(this,UserHomeScreenActivity.class);
+                startActivity(intent);
+                finish();
             }
         }catch(JSONException e){
             e.printStackTrace();

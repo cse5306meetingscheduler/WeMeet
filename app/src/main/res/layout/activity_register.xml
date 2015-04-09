@@ -120,7 +120,6 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/register_text"
                 android:textStyle="bold" />
-
         </LinearLayout>
 
     </ScrollView>

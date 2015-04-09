@@ -20,9 +20,7 @@ public class UserPreferences {
         return prefs.getBoolean("KeepMeLoggedIn",false);
     }
 
-    public void setUserPrefKeepLogin(boolean s){
-        prefs.edit().putBoolean("KeepMeLoggedIn",s).commit();
-    }
+    public void setUserPrefKeepLogin(boolean s){ prefs.edit().putBoolean("KeepMeLoggedIn",s).commit(); }
 
     public String getUserPrefUsername(){
         return prefs.getString("UserName",null);
@@ -39,5 +37,9 @@ public class UserPreferences {
     public String getUserPrefPassword(){
         return prefs.getString("PassWord",null);
     }
+
+    public void setUserPrefHomeLocation(String hl) { prefs.edit().putString("UserHomeLocation",hl).commit(); }
+
+    public String getUserPrefHomeLocation(){ return prefs.getString("UserHomeLocation",null);}
 
 }
