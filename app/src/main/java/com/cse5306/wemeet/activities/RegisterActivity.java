@@ -1,9 +1,12 @@
 package com.cse5306.wemeet.activities;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -35,10 +38,10 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
     ProgressBar mRegProgressBar;
     TextView mHomeLocationTv;
     Button mFetchLocationBtn;
-    boolean dev_id_set = false;
+    boolean dev_id_set = false,dev_loc_set = false;
     GoogleCloudMessaging gcm;
     String rId = null;
-    String regid;
+    String regid,mlocationString;
     String PROJECT_NUMBER = "928493204730";
 
     @Override
@@ -72,34 +75,15 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
         // Get GCM id for this device.
         regUserBtn.setText("Retrieving your GCM id...");
         regUserBtn.setEnabled(false);
+
+
         getRegId();
-
-        GetCurrentLocationTask gps;
-        gps = new GetCurrentLocationTask(RegisterActivity.this);
-
-        if(gps.canGetLocation()){
-            Log.d("Reg", "loc Started");
-            mHomeLocationTv.setVisibility(View.VISIBLE);
-            mHomeLocationTv.setText(gps.getLocation().toString());
-        }else{
-            showError(true,"Turn on Location services");
-            mFetchLocationBtn.setVisibility(View.VISIBLE);
-        }
+        getUserLocation();
 
         mFetchLocationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GetCurrentLocationTask gps1 = new GetCurrentLocationTask(RegisterActivity.this);
-                if(gps1.canGetLocation()){
-                    showError(false,"");
-                    mFetchLocationBtn.setVisibility(View.GONE);
-                    mHomeLocationTv.setVisibility(View.VISIBLE);
-                    mHomeLocationTv.setText(gps1.getLocation().toString());
-                }else{
-                    showError(true,"Turn on Location services");
-                    mFetchLocationBtn.setVisibility(View.VISIBLE);
-                }
-
+                getUserLocation();
             }
         });
 
@@ -111,20 +95,28 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(isNetworkConnected()){
+            getRegId();
+        }else{
+            showError(true,"Could not connect to GCM server, Turn ON the Internet connection");
+        }
+    }
+
     private  void attemptRegister(){
         mRegErrorLinLayout.setVisibility(View.GONE);
-        if(validateInput() && dev_id_set) {
+        if(validateInput()) {
             mRegProgressBar.setVisibility(View.VISIBLE);
             RegisterTask registerTask = new RegisterTask(mRegUsername.getText().toString(),
                                                             mRegPassword.getText().toString(),
                                                             regid,
-                                                            "home_location",
+                                                            mlocationString,
                                                             mRegPhoneNum.getText().toString(),
                                                             mRegEmail.getText().toString());
             registerTask.response = this;
             registerTask.execute();
-        }else if(!dev_id_set){
-            showError(true,"Could not connect to GCM Server");
         }
     }
 
@@ -134,6 +126,7 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
         mRegPassword.setError(null);
         mRegEmail.setError(null);
         mRegPhoneNum.setError(null);
+        showError(false,"");
 
         if(mRegUsername.getText().toString().length() <= 7){
             mRegUsername.setError("Invalid Username");
@@ -153,6 +146,12 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
             mRegEmail.setError("Invalid E-mail");
             mRegEmail.requestFocus();
             return false;
+        }else if(!dev_id_set){
+            showError(true,"Could not connect to GCM server, Turn ON the Internet connection");
+            return false;
+        }else if(!dev_loc_set){
+            showError(true,"Could not retrieve location, Turn ON the Internet and Location services");
+            return false;
         }
 
         return true;
@@ -169,8 +168,12 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
             JSONObject jsonObject = new JSONObject(output.toString());
             if(jsonObject.getInt("success") == 0){
                showError(true,jsonObject.getString("message"));
-            }else{
-                //go to login screen
+            }else if(jsonObject.getInt("success") == 1){
+                // finish this activity if successfully registered and go to login activity
+                Toast.makeText(getApplicationContext(),"Successfully Registered",Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(this,LoginActivity.class);
+                startActivity(intent);
+                finish();
             }
         }catch(JSONException e){
             showError(true, e.getMessage());
@@ -183,24 +186,23 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
-                String msg = null;
                 try {
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
                     }
                     regid = gcm.register(PROJECT_NUMBER);
-                    msg = regid;
-                    Log.i("GCM", msg);
+                    if(regid != null){
+                        dev_id_set = true;
+                    }
                 } catch (IOException ex) {
-                    msg = "Error :" + ex.getMessage();
+                    ex.getMessage();
                 }
-                return msg;
+                return regid;
             }
             @Override
             protected void onPostExecute(String msg) {
                 rId = msg;
                 if(msg != null){
-                    dev_id_set = true;
                     regUserBtn.setText(getResources().getString(R.string.register_text));
                     regUserBtn.setEnabled(true);
                 }
@@ -208,4 +210,34 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
             }
         }.execute(null, null, null);
    }
+
+    private void getUserLocation(){
+        GetCurrentLocationTask gps;
+        gps = new GetCurrentLocationTask(RegisterActivity.this);
+
+        if(gps.canGetLocation() && gps.getLocation() != null){
+            //Log.d("Reg", "loc Started");
+            showError(false, "");
+            mFetchLocationBtn.setVisibility(View.GONE);
+            mHomeLocationTv.setVisibility(View.VISIBLE);
+            mlocationString = String.valueOf(gps.getLocation().getLatitude())+","+String.valueOf(gps.getLocation().getLongitude());
+            mHomeLocationTv.setText("Your current location co-ordinates: "+mlocationString);
+            dev_loc_set = true;
+        }else if(!gps.canGetLocation()){
+            showError(true,"Turn on Location services");
+            mFetchLocationBtn.setVisibility(View.VISIBLE);
+        }else if(gps.getLocation() == null){
+            showError(true,"Turn on Internet and Location services");
+            mFetchLocationBtn.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        if (networkInfo == null) {
+            return false;
+        } else
+            return true;
+    }
 }
