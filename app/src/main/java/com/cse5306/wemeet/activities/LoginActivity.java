@@ -1,12 +1,13 @@
 package com.cse5306.wemeet.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -27,7 +28,7 @@ import org.json.JSONObject;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends ActionBarActivity implements UserLoginTaskResponse {
+public class LoginActivity extends Activity implements UserLoginTaskResponse {
 
 
     private UserLoginTask mAuthTask = null;
@@ -48,6 +49,7 @@ public class LoginActivity extends ActionBarActivity implements UserLoginTaskRes
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        hideKeyboard();
         userPreferences = new UserPreferences(getApplicationContext());
 
         mLoginScreenErrorTv = (TextView) findViewById(R.id.login_screen_error_tv);
@@ -93,6 +95,7 @@ public class LoginActivity extends ActionBarActivity implements UserLoginTaskRes
     }
 
     public void attemptLogin() {
+        hideKeyboard();
         mLoginProgressView.setVisibility(View.VISIBLE);
         mLoginScreenErrorLinLayout.setVisibility(View.GONE);
         if (mAuthTask != null) {
@@ -132,7 +135,6 @@ public class LoginActivity extends ActionBarActivity implements UserLoginTaskRes
             focusView.requestFocus();
             mLoginProgressView.setVisibility(View.GONE);
         } else {
-            mLoginProgressView.setVisibility(View.GONE);
             mAuthTask = new UserLoginTask(username, password);
             mAuthTask.response = this;
             mAuthTask.execute();
@@ -151,22 +153,32 @@ public class LoginActivity extends ActionBarActivity implements UserLoginTaskRes
 
     @Override
     public void processFinish(String output) {
+        mAuthTask = null;
         try{
             JSONObject jsonObject = new JSONObject(output.toString());
             if(jsonObject.getInt("success") == 0){
                 showError(true,jsonObject.getString("message"));
-            }else{
+                mLoginProgressView.setVisibility(View.GONE);
+            }else if(jsonObject.getInt("success") == 1){
+                Toast.makeText(getApplicationContext(),jsonObject.getString("message"),Toast.LENGTH_LONG).show();
                 if(mKeepLoginCb.isChecked()){
                     userPreferences.setUserPrefKeepLogin(true);
                     userPreferences.setUserPrefUsername(mUserNameView.getText().toString());
                     userPreferences.setUserPrefPassword(mPasswordView.getText().toString());
-                    //go to home screen
+
                 }
+                mLoginProgressView.setVisibility(View.GONE);
             }
         }catch(JSONException e){
             e.printStackTrace();
         }
-        mLoginProgressView.setVisibility(View.GONE);
+
+    }
+
+    public void hideKeyboard(){
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
     }
 }
 
