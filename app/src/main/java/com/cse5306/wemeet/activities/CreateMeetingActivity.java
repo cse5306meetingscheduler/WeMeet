@@ -1,8 +1,10 @@
 package com.cse5306.wemeet.activities;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -25,15 +27,16 @@ import android.widget.TimePicker;
 
 import com.cse5306.wemeet.R;
 import com.cse5306.wemeet.preferences.UserPreferences;
+import com.cse5306.wemeet.tasks.CreateMeetingTask;
+import com.cse5306.wemeet.tasks.CreateMeetingTaskResponse;
 import com.cse5306.wemeet.tasks.GetCurrentLocationTask;
+
+import org.json.JSONObject;
 
 import java.util.Calendar;
 
-public class CreateMeetingActivity extends ActionBarActivity {
+public class CreateMeetingActivity extends ActionBarActivity implements CreateMeetingTaskResponse{
 
- /*   create_meet_radio_curr_loc
-            create_meet_radio_home_loc
-    create_meet_location_set*/
     ProgressBar mCMProgressBar;
     ScrollView mCMForm;
     LinearLayout mCMErrorLinLayout;
@@ -66,7 +69,10 @@ public class CreateMeetingActivity extends ActionBarActivity {
         mCMLocatinSelectedTv = (TextView) findViewById(R.id.create_meet_location_set);
 
         userPreferences = new UserPreferences(getApplicationContext());
-        mCMLocatinSelectedTv.setText(userPreferences.getUserPrefHomeLocation());
+        if(userPreferences.getUserPrefHomeLocation() != null){
+            mlocationString = userPreferences.getUserPrefHomeLocation();
+            mCMLocatinSelectedTv.setText(userPreferences.getUserPrefHomeLocation());
+        }
 
 
         mCMDatePicker.setOnClickListener(new View.OnClickListener() {
@@ -94,25 +100,32 @@ public class CreateMeetingActivity extends ActionBarActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if(checkedId == R.id.create_meet_radio_home_loc){
-                    mCMLocatinSelectedTv.setText(userPreferences.getUserPrefHomeLocation());
+                    mlocationString = userPreferences.getUserPrefHomeLocation();
+                    mCMLocatinSelectedTv.setText(mlocationString);
                 }else if(checkedId == R.id.create_meet_radio_curr_loc){
+                    mlocationString = null;
                     mCMLocatinSelectedTv.setText("Retrieving location..");
                     getUserLocation();
                 }
-
             }
         });
     }
 
     public void attemptCreateMeeting(){
-        if(valifdateInput()){
-
+        if(validateInput()){
+            CreateMeetingTask createMeetingTask = new CreateMeetingTask(datePicked,
+                    timePicked,
+                    mlocationString,
+                    userPreferences.getUserPrefUsername(),
+                    Integer.parseInt(mCMMaxPpl.getText().toString()));
+            createMeetingTask.response = this;
+            createMeetingTask.execute();
         }
 
     };
 
 
-    private boolean valifdateInput(){
+    private boolean validateInput(){
 
         if(Integer.parseInt(mCMMaxPpl.getText().toString()) < 2){
             mCMMaxPpl.setError("Max number of people should be greater than 1");
@@ -175,6 +188,22 @@ public class CreateMeetingActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void processFinish(String output) {
+        Log.d("Create meeting output",output);
+        try{
+           JSONObject jsonObject = new JSONObject(output.toString());
+           if(jsonObject.getInt("success") == 1){
+                showGroupId(jsonObject.getString("message"));
+           }
+        }catch (Exception e){
+            e.printStackTrace();
+            showError(true, e.getMessage());
+        }
+
+
     }
 
     public static class DatePickerFragment extends DialogFragment
@@ -243,6 +272,31 @@ public class CreateMeetingActivity extends ActionBarActivity {
         }
     }
 
+    private void showGroupId(final String msg){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                CreateMeetingActivity.this);
+        alertDialogBuilder.setTitle("Your group ID");
+        alertDialogBuilder
+                .setMessage(msg)
+                .setCancelable(false)
+                .setPositiveButton("Share",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                        sharingIntent.setType("text/plain");
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "WeMeet");
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT,"Hey join my group:"+msg);
+                        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                    }
+                })
+                .setNegativeButton("Cancle",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
 
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
 }
 
