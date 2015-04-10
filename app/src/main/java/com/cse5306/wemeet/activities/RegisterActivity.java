@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cse5306.wemeet.R;
+import com.cse5306.wemeet.preferences.UserPreferences;
 import com.cse5306.wemeet.tasks.GetCurrentLocationTask;
 import com.cse5306.wemeet.tasks.RegisterTask;
 import com.cse5306.wemeet.tasks.RegisterTaskResponse;
@@ -33,6 +34,7 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
 
     EditText mRegEmail,mRegPassword,mRegPhoneNum,mRegUsername;
     Button regUserBtn;
+    UserPreferences prefs;
     LinearLayout mRegErrorLinLayout;
     TextView mRegScreenErrorTv;
     ProgressBar mRegProgressBar;
@@ -49,6 +51,7 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        prefs = new UserPreferences(getApplicationContext());
         mRegPassword = (EditText) findViewById(R.id.reg_password);
         mRegPhoneNum = (EditText) findViewById(R.id.reg_phone_number);
         mRegUsername = (EditText) findViewById(R.id.reg_username);
@@ -221,6 +224,7 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
             mFetchLocationBtn.setVisibility(View.GONE);
             mHomeLocationTv.setVisibility(View.VISIBLE);
             mlocationString = String.valueOf(gps.getLocation().getLatitude())+","+String.valueOf(gps.getLocation().getLongitude());
+            prefs.setUserPrefHomeLocation(mlocationString);
             mHomeLocationTv.setText("Your current location co-ordinates: "+mlocationString);
             dev_loc_set = true;
         }else if(!gps.canGetLocation()){

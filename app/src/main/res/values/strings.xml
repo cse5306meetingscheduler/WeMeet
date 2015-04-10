@@ -24,4 +24,13 @@
     <string name="title_activity_user_home_screen">Your Meetings</string>
 
 
+    <!--Create Meeting Activity-->
+    <string name="title_activity_create_meeting">CreateMeetingActivity</string>
+    <string name="prompt_max_ppl">Number of people in the group</string>
+    <string name="prompt_time">Meeting time</string>
+    <string name="prompt_date">Meeting date</string>
+    <string name="create_meeting_text">Create Meeting</string>
+    <string name="select_loc_text">Select location</string>
+
+
 </resources>

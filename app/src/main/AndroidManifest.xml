@@ -61,6 +61,14 @@
             android:name=".activities.UserHomeScreenActivity"
             android:label="@string/title_activity_user_home_screen" >
         </activity>
+        <activity
+            android:name=".activities.CreateMeetingActivity"
+            android:label="@string/title_activity_create_meeting"
+            android:parentActivityName=".activities.UserHomeScreenActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cse5306.wemeet.activities.UserHomeScreenActivity" />
+        </activity>
     </application>
 
 </manifest>

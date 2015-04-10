@@ -1,19 +1,23 @@
 package com.cse5306.wemeet.activities;
 
-import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.cse5306.wemeet.R;
+import com.github.clans.fab.FloatingActionButton;
 
 
 public class UserHomeScreenActivity extends ActionBarActivity {
 
     LinearLayout mLinLayoutProgress,mLinLayoutNoMeetings;
     ListView mMeetingsList;
+    FloatingActionButton mFloatingActionCreateMeeting,mFloatingActionJoinMeeting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +27,23 @@ public class UserHomeScreenActivity extends ActionBarActivity {
         mLinLayoutProgress = (LinearLayout) findViewById(R.id.home_lin_layout_progress);
         mLinLayoutNoMeetings = (LinearLayout) findViewById(R.id.home_lin_layout_no_meetings);
         mMeetingsList = (ListView) findViewById(R.id.home_list_view);
+        mFloatingActionCreateMeeting = (FloatingActionButton) findViewById(R.id.home_create_meeting_button);
+        mFloatingActionJoinMeeting = (FloatingActionButton) findViewById(R.id.home_join_meeting_button);
+
+        mFloatingActionCreateMeeting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent creatingMeetingIntent = new Intent(UserHomeScreenActivity.this,CreateMeetingActivity.class);
+                startActivity(creatingMeetingIntent);
+            }
+        });
+
+        mFloatingActionJoinMeeting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // alert dailog
+            }
+        });
 
 
 
