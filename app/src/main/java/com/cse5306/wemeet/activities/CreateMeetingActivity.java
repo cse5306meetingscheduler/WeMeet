@@ -112,11 +112,12 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
     }
 
     public void attemptCreateMeeting(){
+        showError(false,"");
         if(validateInput()){
             CreateMeetingTask createMeetingTask = new CreateMeetingTask(datePicked,
                     timePicked,
                     mlocationString,
-                    userPreferences.getUserPrefUsername(),
+                    userPreferences.getSessionUserPrefUsername(),
                     Integer.parseInt(mCMMaxPpl.getText().toString()));
             createMeetingTask.response = this;
             createMeetingTask.execute();
@@ -127,13 +128,13 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
 
     private boolean validateInput(){
 
-        if(Integer.parseInt(mCMMaxPpl.getText().toString()) < 2){
+        if(mCMMaxPpl.getText().toString().length() == 0){
             mCMMaxPpl.setError("Max number of people should be greater than 1");
             return false;
-        }else if(datePicked == null && datePicked.equals(mCMDate.getText().toString())){
+        }else if(datePicked == null){
             mCMDate.setError("Date not set");
             return false;
-        }else if(timePicked == null && timePicked.equalsIgnoreCase(mCMTime.getText().toString())){
+        }else if(timePicked == null){
             mCMTime.setError("Time not set");
             return false;
         }else if(mlocationString == null){

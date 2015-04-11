@@ -58,6 +58,7 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
         mLoginScreenErrorTv = (TextView) findViewById(R.id.login_screen_error_tv);
         mLoginScreenErrorLinLayout = (LinearLayout) findViewById(R.id.login_error_lin_layout);
         mKeepLoginCb = (CheckBox) findViewById(R.id.reg_check_box);
+        mLoginProgressView = findViewById(R.id.login_progress);
 
         mUserNameView = (EditText) findViewById(R.id.username);
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -73,10 +74,14 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
         });
 
         if(userPreferences.getUserPrefKeepLogin()){
-            mLoginForm.setVisibility(View.GONE);
-            mAuthTask = new UserLoginTask(userPreferences.getUserPrefUsername(), userPreferences.getUserPrefPassword());
+            mKeepLoginCb.setChecked(true);
+            userPreferences.setSessionUserPrefUsername(userPreferences.getUserPrefUsername());
+            mPasswordView.setText(userPreferences.getUserPrefPassword());
+            mUserNameView.setText(userPreferences.getUserPrefUsername());
+            attemptLogin();
+            /*mAuthTask = new UserLoginTask(userPreferences.getUserPrefUsername(), userPreferences.getUserPrefPassword());
             mAuthTask.response = this;
-            mAuthTask.execute();
+            mAuthTask.execute();*/
         }
 
         mSignInButton = (Button) findViewById(R.id.login_button);
@@ -95,7 +100,6 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
             }
         });
 
-        mLoginProgressView = findViewById(R.id.login_progress);
     }
 
     public void attemptLogin() {
@@ -139,6 +143,7 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
             focusView.requestFocus();
             mLoginProgressView.setVisibility(View.GONE);
         } else {
+            userPreferences.setSessionUserPrefUsername(username);
             mAuthTask = new UserLoginTask(username, password);
             mAuthTask.response = this;
             mAuthTask.execute();
@@ -161,6 +166,7 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
         try{
             JSONObject jsonObject = new JSONObject(output.toString());
             if(jsonObject.getInt("success") == 0){
+                userPreferences.setSessionUserPrefUsername(null);
                 showError(true,jsonObject.getString("message"));
                 mLoginProgressView.setVisibility(View.GONE);
                 mLoginForm.setVisibility(View.VISIBLE);
@@ -171,12 +177,12 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
                     userPreferences.setUserPrefPassword(mPasswordView.getText().toString());
                 }
                 mLoginProgressView.setVisibility(View.GONE);
-                Toast.makeText(getApplicationContext(),jsonObject.getString("message"),Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(this,UserHomeScreenActivity.class);
                 startActivity(intent);
                 finish();
             }
         }catch(JSONException e){
+            userPreferences.setUserPrefUsername(null);
             e.printStackTrace();
         }
 

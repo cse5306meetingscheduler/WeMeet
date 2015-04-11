@@ -8,8 +8,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.cse5306.wemeet.R;
+import com.cse5306.wemeet.preferences.UserPreferences;
 import com.github.clans.fab.FloatingActionButton;
 
 
@@ -18,11 +20,15 @@ public class UserHomeScreenActivity extends ActionBarActivity {
     LinearLayout mLinLayoutProgress,mLinLayoutNoMeetings;
     ListView mMeetingsList;
     FloatingActionButton mFloatingActionCreateMeeting,mFloatingActionJoinMeeting;
+    UserPreferences userPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home_screen);
+
+        userPreferences = new UserPreferences(getApplicationContext());
+        Toast.makeText(getApplicationContext(),userPreferences.getSessionUserPrefUsername(),Toast.LENGTH_SHORT).show();
 
         mLinLayoutProgress = (LinearLayout) findViewById(R.id.home_lin_layout_progress);
         mLinLayoutNoMeetings = (LinearLayout) findViewById(R.id.home_lin_layout_no_meetings);
@@ -65,7 +71,14 @@ public class UserHomeScreenActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.logout) {
+            userPreferences.setUserPrefKeepLogin(false);
+            userPreferences.setUserPrefUsername(null);
+            userPreferences.setUserPrefPassword(null);
+            userPreferences.setSessionUserPrefUsername(null);
+            Intent intentLoginIntent = new Intent(this,LoginActivity.class);
+            startActivity(intentLoginIntent);
+            finish();
             return true;
         }
 

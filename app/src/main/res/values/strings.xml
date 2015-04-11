@@ -2,6 +2,7 @@
     <string name="app_name">WeMeet</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="logout_str">Logout</string>
 
     <!-- Login Activiy -->
     <string name="title_activity_Login">WeMeet - Login</string>
