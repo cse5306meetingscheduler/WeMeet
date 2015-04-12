@@ -1,7 +1,10 @@
 package com.cse5306.wemeet.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -59,6 +62,7 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
         mLoginScreenErrorLinLayout = (LinearLayout) findViewById(R.id.login_error_lin_layout);
         mKeepLoginCb = (CheckBox) findViewById(R.id.reg_check_box);
         mLoginProgressView = findViewById(R.id.login_progress);
+        mSignInButton = (Button) findViewById(R.id.login_button);
 
         mUserNameView = (EditText) findViewById(R.id.username);
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -84,7 +88,7 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
             mAuthTask.execute();*/
         }
 
-        mSignInButton = (Button) findViewById(R.id.login_button);
+
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -139,6 +143,12 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
             cancel = true;
         }
 
+        if(!isNetworkConnected()){
+            focusView = mSignInButton;
+            showError(true,"No internet connection");
+            cancel = true;
+        }
+
         if (cancel) {
             focusView.requestFocus();
             mLoginProgressView.setVisibility(View.GONE);
@@ -162,13 +172,13 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
 
     @Override
     public void processFinish(String output) {
+        mLoginProgressView.setVisibility(View.GONE);
         mAuthTask = null;
         try{
             JSONObject jsonObject = new JSONObject(output.toString());
             if(jsonObject.getInt("success") == 0){
                 userPreferences.setSessionUserPrefUsername(null);
                 showError(true,jsonObject.getString("message"));
-                mLoginProgressView.setVisibility(View.GONE);
                 mLoginForm.setVisibility(View.VISIBLE);
             }else if(jsonObject.getInt("success") == 1){
                 if(mKeepLoginCb.isChecked()){
@@ -176,13 +186,12 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
                     userPreferences.setUserPrefUsername(mUserNameView.getText().toString());
                     userPreferences.setUserPrefPassword(mPasswordView.getText().toString());
                 }
-                mLoginProgressView.setVisibility(View.GONE);
                 Intent intent = new Intent(this,UserHomeScreenActivity.class);
                 startActivity(intent);
                 finish();
             }
         }catch(JSONException e){
-            userPreferences.setUserPrefUsername(null);
+            mLoginProgressView.setVisibility(View.GONE);
             e.printStackTrace();
         }
 
@@ -192,6 +201,15 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        if (ni == null) {
+            return false;
+        } else
+            return true;
     }
 }
 

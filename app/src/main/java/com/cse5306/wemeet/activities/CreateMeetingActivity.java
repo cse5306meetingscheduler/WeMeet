@@ -112,8 +112,10 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
     }
 
     public void attemptCreateMeeting(){
+
         showError(false,"");
         if(validateInput()){
+            mCMProgressBar.setVisibility(View.VISIBLE);
             CreateMeetingTask createMeetingTask = new CreateMeetingTask(datePicked,
                     timePicked,
                     mlocationString,
@@ -193,6 +195,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
 
     @Override
     public void processFinish(String output) {
+        mCMProgressBar.setVisibility(View.GONE);
         Log.d("Create meeting output",output);
         try{
            JSONObject jsonObject = new JSONObject(output.toString());
@@ -289,7 +292,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
                         startActivity(Intent.createChooser(sharingIntent, "Share via"));
                     }
                 })
-                .setNegativeButton("Cancle",new DialogInterface.OnClickListener() {
+                .setNegativeButton("Close",new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finish();

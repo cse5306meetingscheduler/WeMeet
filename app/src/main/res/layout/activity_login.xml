@@ -67,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Keep me loggid in"
+                android:text="Keep me logged in"
                 android:checked="false"
                 />
 
