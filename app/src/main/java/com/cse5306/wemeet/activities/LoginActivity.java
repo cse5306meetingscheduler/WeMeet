@@ -83,9 +83,6 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
             mPasswordView.setText(userPreferences.getUserPrefPassword());
             mUserNameView.setText(userPreferences.getUserPrefUsername());
             attemptLogin();
-            /*mAuthTask = new UserLoginTask(userPreferences.getUserPrefUsername(), userPreferences.getUserPrefPassword());
-            mAuthTask.response = this;
-            mAuthTask.execute();*/
         }
 
 

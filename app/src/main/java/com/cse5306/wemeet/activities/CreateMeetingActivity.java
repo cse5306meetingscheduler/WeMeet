@@ -19,6 +19,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
@@ -41,7 +42,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
     ScrollView mCMForm;
     LinearLayout mCMErrorLinLayout;
     TextView mCMErrorTv,mCMLocatinSelectedTv;
-    EditText mCMMaxPpl;
+    NumberPicker mCMMaxPpl;
     public static EditText mCMDate,mCMTime;
     Button mCMBtn;
     ImageButton mCMTimePicker,mCMDatePicker;
@@ -59,7 +60,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
         mCMForm = (ScrollView) findViewById(R.id.create_meeting_form);
         mCMErrorLinLayout = (LinearLayout) findViewById(R.id.create_meet_error_lin_layout);
         mCMErrorTv = (TextView) findViewById(R.id.create_meet_screen_error_tv);
-        mCMMaxPpl = (EditText) findViewById(R.id.create_meet_max_ppl);
+        mCMMaxPpl = (NumberPicker) findViewById(R.id.create_meet_max_ppl);
         mCMDate = (EditText) findViewById(R.id.create_meet_date);
         mCMTime= (EditText) findViewById(R.id.create_meet_time);
         mCMBtn = (Button) findViewById(R.id.create_meet_btn);
@@ -68,12 +69,15 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
         mCMRadioGrp = (RadioGroup) findViewById(R.id.create_meet_radio_grp);
         mCMLocatinSelectedTv = (TextView) findViewById(R.id.create_meet_location_set);
 
+
+        mCMMaxPpl.setMinValue(2);
+        mCMMaxPpl.setMaxValue(10);
+
         userPreferences = new UserPreferences(getApplicationContext());
         if(userPreferences.getUserPrefHomeLocation() != null){
             mlocationString = userPreferences.getUserPrefHomeLocation();
             mCMLocatinSelectedTv.setText(userPreferences.getUserPrefHomeLocation());
         }
-
 
         mCMDatePicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,7 +124,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
                     timePicked,
                     mlocationString,
                     userPreferences.getSessionUserPrefUsername(),
-                    Integer.parseInt(mCMMaxPpl.getText().toString()));
+                   mCMMaxPpl.getValue());
             createMeetingTask.response = this;
             createMeetingTask.execute();
         }
@@ -130,10 +134,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
 
     private boolean validateInput(){
 
-        if(mCMMaxPpl.getText().toString().length() == 0){
-            mCMMaxPpl.setError("Max number of people should be greater than 1");
-            return false;
-        }else if(datePicked == null){
+        if(datePicked == null){
             mCMDate.setError("Date not set");
             return false;
         }else if(timePicked == null){
@@ -200,7 +201,9 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
         try{
            JSONObject jsonObject = new JSONObject(output.toString());
            if(jsonObject.getInt("success") == 1){
-                showGroupId(jsonObject.getString("message"));
+               datePicked = null;
+               timePicked = null;
+               showGroupId(jsonObject.getString("message"));
            }
         }catch (Exception e){
             e.printStackTrace();
