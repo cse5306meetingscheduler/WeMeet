@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -173,11 +174,14 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
         mAuthTask = null;
         try{
             JSONObject jsonObject = new JSONObject(output.toString());
+            Log.d("res",output);
             if(jsonObject.getInt("success") == 0){
+
                 userPreferences.setSessionUserPrefUsername(null);
                 showError(true,jsonObject.getString("message"));
                 mLoginForm.setVisibility(View.VISIBLE);
             }else if(jsonObject.getInt("success") == 1){
+                userPreferences.setUserPrefHomeLocation(jsonObject.getString("user_location"));
                 if(mKeepLoginCb.isChecked()){
                     userPreferences.setUserPrefKeepLogin(true);
                     userPreferences.setUserPrefUsername(mUserNameView.getText().toString());

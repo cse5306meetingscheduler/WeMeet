@@ -24,6 +24,7 @@ import com.cse5306.wemeet.R;
 import com.cse5306.wemeet.fragments.HostMeetingFragment;
 import com.cse5306.wemeet.fragments.JoinedMeetingFragment;
 import com.cse5306.wemeet.preferences.UserPreferences;
+import com.cse5306.wemeet.tasks.JoinMeetingTask;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
@@ -45,7 +46,7 @@ public class UserHomeScreenActivity extends ActionBarActivity implements ActionB
         setContentView(R.layout.activity_user_home_screen);
 
         userPreferences = new UserPreferences(getApplicationContext());
-        Toast.makeText(getApplicationContext(),userPreferences.getSessionUserPrefUsername(),Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(),userPreferences.getUserPrefHomeLocation(),Toast.LENGTH_SHORT).show();
 
         floatingActionMenu = (FloatingActionMenu) findViewById(R.id.floating_menu);
         mFloatingActionCreateMeeting = (FloatingActionButton) findViewById(R.id.home_create_meeting_button);
@@ -116,7 +117,8 @@ public class UserHomeScreenActivity extends ActionBarActivity implements ActionB
         alert.setPositiveButton("Join", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 joinGrpId = joinGrpIdEt.getText().toString();
-                //Toast.makeText(getApplicationContext(),joinGrpId,Toast.LENGTH_SHORT).show();
+                callJoinMeetingTask();
+
             }
         });
 
@@ -129,6 +131,13 @@ public class UserHomeScreenActivity extends ActionBarActivity implements ActionB
 
         alert.show();
 
+    }
+
+    private void callJoinMeetingTask() {
+        JoinMeetingTask joinMeetingTask = new JoinMeetingTask(userPreferences.getSessionUserPrefUsername(),
+                userPreferences.getUserPrefHomeLocation(),
+                joinGrpId);
+        joinMeetingTask.execute();
     }
 
 
