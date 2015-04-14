@@ -20,7 +20,9 @@ import java.util.List;
 /**
  * Created by Sathvik on 14/04/15.
  */
-public class JoinMeetingTask extends AsyncTask<String, String, String> {
+public class JoinMeetingTask extends AsyncTask<String, String, String>  {
+
+    public JoinMeetingTaskResponse response = null;
 
     String username;
     String home_loaction;
@@ -45,10 +47,8 @@ public class JoinMeetingTask extends AsyncTask<String, String, String> {
             nameValuePairs.add(new BasicNameValuePair("location", home_loaction));
             nameValuePairs.add(new BasicNameValuePair("group_id", group_id));
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
             response = httpclient.execute(httppost);
-
-            //
-
             return EntityUtils.toString(response.getEntity());
         } catch (ClientProtocolException e) {
             // TODO Auto-generated catch block
@@ -61,7 +61,7 @@ public class JoinMeetingTask extends AsyncTask<String, String, String> {
 
     @Override
     protected void onPostExecute(String s) {
-        Log.d("joinmeeting",s);
         super.onPostExecute(s);
+        response.processFinish(s);
     }
 }

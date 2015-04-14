@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -18,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cse5306.wemeet.R;
@@ -25,13 +28,18 @@ import com.cse5306.wemeet.fragments.HostMeetingFragment;
 import com.cse5306.wemeet.fragments.JoinedMeetingFragment;
 import com.cse5306.wemeet.preferences.UserPreferences;
 import com.cse5306.wemeet.tasks.JoinMeetingTask;
+import com.cse5306.wemeet.tasks.JoinMeetingTaskResponse;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
+import org.json.JSONObject;
 
-public class UserHomeScreenActivity extends ActionBarActivity implements ActionBar.TabListener {
+
+public class UserHomeScreenActivity extends ActionBarActivity implements ActionBar.TabListener, JoinMeetingTaskResponse {
 
     String joinGrpId = null;
+    LinearLayout mHomeScreenLinLayout;
+    TextView mHomeScreenResTv;
     ActionBar actionBar;
     ViewPager mViewPager;
     TabsPagerAdapter tabsPagerAdapter;
@@ -45,14 +53,16 @@ public class UserHomeScreenActivity extends ActionBarActivity implements ActionB
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home_screen);
 
-        userPreferences = new UserPreferences(getApplicationContext());
-        Toast.makeText(getApplicationContext(),userPreferences.getUserPrefHomeLocation(),Toast.LENGTH_SHORT).show();
-
         floatingActionMenu = (FloatingActionMenu) findViewById(R.id.floating_menu);
         mFloatingActionCreateMeeting = (FloatingActionButton) findViewById(R.id.home_create_meeting_button);
         mFloatingActionJoinMeeting = (FloatingActionButton) findViewById(R.id.home_join_meeting_button);
+        mHomeScreenLinLayout = (LinearLayout) findViewById(R.id.home_screen_result_ll);
+        mHomeScreenResTv = (TextView) findViewById(R.id.home_screen_result_tv);
         mViewPager = (ViewPager) findViewById(R.id.pager);
         actionBar = getSupportActionBar();
+
+        userPreferences = new UserPreferences(getApplicationContext());
+        Toast.makeText(getApplicationContext(), userPreferences.getUserPrefHomeLocation(), Toast.LENGTH_SHORT).show();
 
         mFloatingActionCreateMeeting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,6 +148,7 @@ public class UserHomeScreenActivity extends ActionBarActivity implements ActionB
                 userPreferences.getUserPrefHomeLocation(),
                 joinGrpId);
         joinMeetingTask.execute();
+        joinMeetingTask.response = this;
     }
 
 
@@ -184,6 +195,33 @@ public class UserHomeScreenActivity extends ActionBarActivity implements ActionB
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void processFinish(String output) {
+        try{
+            JSONObject jsonObject = new JSONObject(output.toString());
+            if(jsonObject.getInt("success") == 0){
+                showResponse(true,jsonObject.getString("message"));
+            }else if(jsonObject.getInt("success")==1){
+                showResponse(true,jsonObject.getString("message"));
+            }
+        }catch (Exception e){
+            showResponse(true,e.getMessage());
+        }finally {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    showResponse(false,"");
+                }
+            }, 4000);
+        }
+
+    }
+
+    private void showResponse(final boolean show,final String res){
+        mHomeScreenLinLayout.setVisibility(show ? View.VISIBLE : View.GONE);
+        mHomeScreenResTv.setText(res);
     }
 }
 
