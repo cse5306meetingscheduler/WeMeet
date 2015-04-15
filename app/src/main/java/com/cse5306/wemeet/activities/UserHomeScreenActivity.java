@@ -106,7 +106,7 @@ public class UserHomeScreenActivity extends ActionBarActivity implements ActionB
 
         @Override
         public void onPageSelected(int position) {
-
+            actionBar.setSelectedNavigationItem(position);
         }
 
         @Override
@@ -192,6 +192,9 @@ public class UserHomeScreenActivity extends ActionBarActivity implements ActionB
             startActivity(intentLoginIntent);
             finish();
             return true;
+        }else if(id == R.id.details){
+            Intent intent = new Intent(this,MeetingDetailsActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
