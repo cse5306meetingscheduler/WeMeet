@@ -9,24 +9,26 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cse5306.wemeet.R;
 import com.cse5306.wemeet.fragments.HostMeetingFragment;
 import com.cse5306.wemeet.fragments.JoinedMeetingFragment;
+import com.cse5306.wemeet.fragments.ZoomOutPageTransformer;
 import com.cse5306.wemeet.preferences.UserPreferences;
+import com.cse5306.wemeet.tasks.GetCurrentLocationTask;
 import com.cse5306.wemeet.tasks.JoinMeetingTask;
 import com.cse5306.wemeet.tasks.JoinMeetingTaskResponse;
 import com.github.clans.fab.FloatingActionButton;
@@ -35,9 +37,9 @@ import com.github.clans.fab.FloatingActionMenu;
 import org.json.JSONObject;
 
 
-public class UserHomeScreenActivity extends ActionBarActivity implements ActionBar.TabListener, JoinMeetingTaskResponse {
+public class UserHomeScreenActivity extends ActionBarActivity implements JoinMeetingTaskResponse {
 
-    String joinGrpId = null;
+    String joinGrpId = null,locationStr = null;
     LinearLayout mHomeScreenLinLayout;
     TextView mHomeScreenResTv;
     ActionBar actionBar;
@@ -59,10 +61,12 @@ public class UserHomeScreenActivity extends ActionBarActivity implements ActionB
         mHomeScreenLinLayout = (LinearLayout) findViewById(R.id.home_screen_result_ll);
         mHomeScreenResTv = (TextView) findViewById(R.id.home_screen_result_tv);
         mViewPager = (ViewPager) findViewById(R.id.pager);
-        actionBar = getSupportActionBar();
 
         userPreferences = new UserPreferences(getApplicationContext());
         Toast.makeText(getApplicationContext(), userPreferences.getUserPrefHomeLocation(), Toast.LENGTH_SHORT).show();
+
+        actionBar = getSupportActionBar();
+        actionBar.setTitle(userPreferences.getSessionUserPrefUsername() + " - Your Meetings");
 
         mFloatingActionCreateMeeting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,38 +86,12 @@ public class UserHomeScreenActivity extends ActionBarActivity implements ActionB
             }
         });
 
-        // Initializing action bar tabs
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setTitle(userPreferences.getSessionUserPrefUsername() + " - Your Meetings");
+
         tabsPagerAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+        mViewPager.setPageTransformer(true,new ZoomOutPageTransformer());
         mViewPager.setAdapter(tabsPagerAdapter);
-       mViewPager.setOnPageChangeListener(onPageChangeListener);
-        actionBar.setHomeButtonEnabled(false);
-        // Adding Tabs
-        for (String tab_name : tabs) {
-            actionBar.addTab(actionBar.newTab().setText(tab_name)
-                    .setTabListener(this));
-        }
 
     }
-
-    ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            actionBar.setSelectedNavigationItem(position);
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-            actionBar.setSelectedNavigationItem(position);
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-
-        }
-    };
 
     private void promptUserInput() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -122,11 +100,30 @@ public class UserHomeScreenActivity extends ActionBarActivity implements ActionB
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.alert_join_group, null);
         final EditText joinGrpIdEt = (EditText) dialogView.findViewById(R.id.join_grp_id);
+        RadioGroup radioGroup = (RadioGroup) dialogView.findViewById(R.id.join_meet_radio_grp);
+        RadioButton joinHomeLoc = (RadioButton) dialogView.findViewById(R.id.join_meet_radio_home_loc);
+        RadioButton joinCurrLoc = (RadioButton) dialogView.findViewById(R.id.join_meet_radio_curr_loc);
+        final TextView joinMeetLocSetTv = (TextView) dialogView.findViewById(R.id.join_meet_location_set);
+        joinMeetLocSetTv.setText(userPreferences.getUserPrefHomeLocation());
+        locationStr = userPreferences.getUserPrefHomeLocation();
+
         alert.setView(dialogView);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId == R.id.join_meet_radio_home_loc){
+                    locationStr = userPreferences.getUserPrefHomeLocation();
+                    joinMeetLocSetTv.setText(userPreferences.getUserPrefHomeLocation());
+                }else if(checkedId == R.id.join_meet_radio_curr_loc){
+                    joinMeetLocSetTv.setText(getUserLocation());
+                }
+            }
+        });
 
         alert.setPositiveButton("Join", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 joinGrpId = joinGrpIdEt.getText().toString();
+                Toast.makeText(getApplication(),locationStr,Toast.LENGTH_SHORT).show();
                 callJoinMeetingTask();
 
             }
@@ -138,35 +135,22 @@ public class UserHomeScreenActivity extends ActionBarActivity implements ActionB
                 joinGrpId = null;
             }
         });
-
         alert.show();
-
     }
 
     private void callJoinMeetingTask() {
-        JoinMeetingTask joinMeetingTask = new JoinMeetingTask(userPreferences.getSessionUserPrefUsername(),
-                userPreferences.getUserPrefHomeLocation(),
-                joinGrpId);
-        joinMeetingTask.execute();
-        joinMeetingTask.response = this;
+        if(joinGrpId != null && locationStr != null){
+            JoinMeetingTask joinMeetingTask = new JoinMeetingTask(userPreferences.getSessionUserPrefUsername(),
+                    locationStr,
+                    joinGrpId);
+            joinMeetingTask.execute();
+            joinMeetingTask.response = this;
+        }else if(locationStr == null){
+            showResponse(true, "Location not set");
+        }else if(joinGrpId == null){
+            showResponse(true, "Group Id not set");
+        }
     }
-
-
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        mViewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        Log.d("onTabUnSel",String.valueOf(tab.getPosition()));
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        Log.d("onTabUnReSel",String.valueOf(tab.getPosition()));
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -202,6 +186,7 @@ public class UserHomeScreenActivity extends ActionBarActivity implements ActionB
 
     @Override
     public void processFinish(String output) {
+        locationStr = null;
         try{
             JSONObject jsonObject = new JSONObject(output.toString());
             if(jsonObject.getInt("success") == 0){
@@ -225,6 +210,21 @@ public class UserHomeScreenActivity extends ActionBarActivity implements ActionB
     private void showResponse(final boolean show,final String res){
         mHomeScreenLinLayout.setVisibility(show ? View.VISIBLE : View.GONE);
         mHomeScreenResTv.setText(res);
+    }
+
+    private String getUserLocation(){
+        locationStr = null;
+        GetCurrentLocationTask gps;
+        gps = new GetCurrentLocationTask(UserHomeScreenActivity.this);
+        if(gps.canGetLocation() && gps.getLocation() != null){
+            locationStr = String.valueOf(gps.getLocation().getLatitude())+","+String.valueOf(gps.getLocation().getLongitude());
+            return String.valueOf(gps.getLocation().getLatitude())+","+String.valueOf(gps.getLocation().getLongitude());
+        }else if(!gps.canGetLocation()){
+            return "Turn on Location services";
+        }else if(gps.getLocation() == null){
+            return "Turn on Internet and Location services";
+        }
+        return "location not set";
     }
 }
 

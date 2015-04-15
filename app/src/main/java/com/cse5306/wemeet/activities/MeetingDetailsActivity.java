@@ -1,5 +1,7 @@
 package com.cse5306.wemeet.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -42,6 +44,10 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
                 .position(latLng)
                 .title("Marker"));
 
+        Intent mapIntent = new Intent(android.content.Intent.ACTION_VIEW,
+                Uri.parse("google.navigation:q="+userPreferences.getUserPrefHomeLocation().split(",")[0]+","+userPreferences.getUserPrefHomeLocation().split(",")[1]));
+        mapIntent.setPackage("com.google.android.apps.maps");
+        startActivity(mapIntent);
     }
 
     @Override
