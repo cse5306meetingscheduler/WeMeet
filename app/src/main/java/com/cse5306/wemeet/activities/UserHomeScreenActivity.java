@@ -6,12 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,26 +22,33 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cse5306.wemeet.R;
-import com.cse5306.wemeet.fragments.HostMeetingFragment;
-import com.cse5306.wemeet.fragments.JoinedMeetingFragment;
+import com.cse5306.wemeet.adapters.TabsPagerAdapter;
 import com.cse5306.wemeet.fragments.ZoomOutPageTransformer;
+import com.cse5306.wemeet.objects.MeetingDetails;
 import com.cse5306.wemeet.preferences.UserPreferences;
 import com.cse5306.wemeet.tasks.GetCurrentLocationTask;
 import com.cse5306.wemeet.tasks.JoinMeetingTask;
 import com.cse5306.wemeet.tasks.JoinMeetingTaskResponse;
+import com.cse5306.wemeet.tasks.MeetingListTask;
+import com.cse5306.wemeet.tasks.MeetingListTaskResponse;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class UserHomeScreenActivity extends ActionBarActivity implements JoinMeetingTaskResponse {
+
+public class UserHomeScreenActivity extends ActionBarActivity implements JoinMeetingTaskResponse,MeetingListTaskResponse {
 
     String joinGrpId = null,locationStr = null;
     LinearLayout mHomeScreenLinLayout;
     TextView mHomeScreenResTv;
     ActionBar actionBar;
     ViewPager mViewPager;
+
+    List<MeetingDetails> meetingDetailsList;
     TabsPagerAdapter tabsPagerAdapter;
     FloatingActionMenu floatingActionMenu;
     FloatingActionButton mFloatingActionCreateMeeting,mFloatingActionJoinMeeting;
@@ -61,7 +66,7 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
         mHomeScreenLinLayout = (LinearLayout) findViewById(R.id.home_screen_result_ll);
         mHomeScreenResTv = (TextView) findViewById(R.id.home_screen_result_tv);
         mViewPager = (ViewPager) findViewById(R.id.pager);
-
+        meetingDetailsList = new ArrayList<MeetingDetails>();
         userPreferences = new UserPreferences(getApplicationContext());
         Toast.makeText(getApplicationContext(), userPreferences.getUserPrefHomeLocation(), Toast.LENGTH_SHORT).show();
 
@@ -86,10 +91,9 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
             }
         });
 
-
-        tabsPagerAdapter = new TabsPagerAdapter(getSupportFragmentManager());
-        mViewPager.setPageTransformer(true,new ZoomOutPageTransformer());
-        mViewPager.setAdapter(tabsPagerAdapter);
+        MeetingListTask meetingListTask = new MeetingListTask(userPreferences.getSessionUserPrefUsername());
+        meetingListTask.response=this;
+        meetingListTask.execute();
 
     }
 
@@ -187,6 +191,8 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
     @Override
     public void processFinish(String output) {
         locationStr = null;
+        joinGrpId = null;
+        Log.d("join",output);
         try{
             JSONObject jsonObject = new JSONObject(output.toString());
             if(jsonObject.getInt("success") == 0){
@@ -226,40 +232,22 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
         }
         return "location not set";
     }
+
+    @Override
+    public void processFinish(List<MeetingDetails> output) {
+        setMeetingDetailsList(output);
+        tabsPagerAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+        mViewPager.setPageTransformer(true,new ZoomOutPageTransformer());
+        mViewPager.setAdapter(tabsPagerAdapter);
+
+    }
+
+    public List<MeetingDetails> getMeetingDetailsList() {
+        return meetingDetailsList;
+    }
+
+    public void setMeetingDetailsList(List<MeetingDetails> meetingDetailsList) {
+        this.meetingDetailsList = meetingDetailsList;
+    }
 }
 
-class TabsPagerAdapter extends FragmentStatePagerAdapter {
-
-    public TabsPagerAdapter(FragmentManager fm) {
-        super(fm);
-    }
-
-    @Override
-    public Fragment getItem(int position) {
-
-        if(position == 0){
-            return new HostMeetingFragment();
-        }else if(position == 1){
-            return new JoinedMeetingFragment();
-        }
-        return null;
-    }
-
-    @Override
-    public int getCount() {
-        return 2;
-    }
-
-
-
-    @Override
-    public CharSequence getPageTitle(int position) {
-        String title = null;
-        if(position == 0){
-            title = "Host meetings";
-        }else if(position == 1){
-            title = "Your meetings";
-        }
-        return title;
-    }
-}
