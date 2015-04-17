@@ -3,16 +3,11 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="your meetings"/>
-
     <LinearLayout
-        android:id="@+id/home_lin_layout_progress"
+        android:id="@+id/your_meetings_lin_layout_progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ProgressBar
             android:layout_width="match_parent"
@@ -24,10 +19,10 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/home_lin_layout_no_meetings"
+        android:id="@+id/your_meetings_lin_layout_no_meetings"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <TextView
             android:layout_width="match_parent"
@@ -37,5 +32,12 @@
             />
 
     </LinearLayout>
+
+    <ListView
+        android:id="@+id/your_meetings_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </ListView>
 
 </LinearLayout>
