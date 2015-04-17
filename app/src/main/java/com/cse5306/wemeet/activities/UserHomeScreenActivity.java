@@ -68,7 +68,7 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
         mViewPager = (ViewPager) findViewById(R.id.pager);
         meetingDetailsList = new ArrayList<MeetingDetails>();
         userPreferences = new UserPreferences(getApplicationContext());
-        Toast.makeText(getApplicationContext(), userPreferences.getUserPrefHomeLocation(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), userPreferences.getUserPrefHomeLocation(), Toast.LENGTH_SHORT).show();
 
         actionBar = getSupportActionBar();
         actionBar.setTitle(userPreferences.getSessionUserPrefUsername() + " - Your Meetings");
@@ -129,7 +129,6 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
                 joinGrpId = joinGrpIdEt.getText().toString();
                 Toast.makeText(getApplication(),locationStr,Toast.LENGTH_SHORT).show();
                 callJoinMeetingTask();
-
             }
         });
 

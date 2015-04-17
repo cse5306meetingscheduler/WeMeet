@@ -56,8 +56,14 @@ public class MeetingListAdapter extends BaseAdapter {
         meetingGroupId.setText(String.valueOf(meetingDetailsList.get(position).getGroupId()));
         meetingDate.setText(meetingDetailsList.get(position).getMeetingDate());
         meetingTime.setText(meetingDetailsList.get(position).getMeetingTime());
-        meetingPoint.setText(meetingDetailsList.get(position).getMidpoint());
-        meetingPlace.setText(meetingDetailsList.get(position).getMeetingDate());
+
+        if(meetingDetailsList.get(position).getMidpoint().equalsIgnoreCase("null")){
+            meetingPoint.setText("Waiting for users to join");
+        }else{
+            meetingPoint.setText("Click to choose your choice location");
+        }
+
+        meetingPlace.setText(meetingDetailsList.get(position).getFinalDestination());
 
         return convertView;
     }

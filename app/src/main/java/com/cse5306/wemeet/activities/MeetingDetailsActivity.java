@@ -4,11 +4,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import com.cse5306.wemeet.R;
 import com.cse5306.wemeet.preferences.UserPreferences;
+import com.cse5306.wemeet.tasks.GetRestaurantListTask;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -19,6 +24,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MeetingDetailsActivity extends ActionBarActivity implements OnMapReadyCallback {
 
     UserPreferences userPreferences;
+    LinearLayout mSelectRestaurant,mMap;
+    ListView selectRestaurantListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +33,28 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
         setContentView(R.layout.activity_meeting_details);
 
         userPreferences = new UserPreferences(this);
+        mMap = (LinearLayout) findViewById(R.id.meeting_details_map_fragment);
+        mSelectRestaurant = (LinearLayout) findViewById(R.id.select_restaurant_list_layout);
+        selectRestaurantListView = (ListView) findViewById(R.id.select_restaurant_list);
 
-        MapFragment mapFragment = (MapFragment) getFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        Intent intent = getIntent();
+        String message = intent.getStringExtra("fragmentInflateType");
+        String groupId = intent.getStringExtra("groupId");
+        Log.d("asd", groupId);
+
+
+        if(message.equalsIgnoreCase("suggest_list")) {
+            mSelectRestaurant.setVisibility(View.VISIBLE);
+            GetRestaurantListTask getRestaurantListTask = new GetRestaurantListTask(groupId);
+            getRestaurantListTask.execute();
+        }
+        else if(message.equalsIgnoreCase("map")){
+            mMap.setVisibility(View.VISIBLE);
+            MapFragment mapFragment = (MapFragment) getFragmentManager()
+                    .findFragmentById(R.id.map);
+            mapFragment.getMapAsync(this);
+        }
+
 
     }
 
@@ -44,8 +69,12 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
                 .position(latLng)
                 .title("Marker"));
 
+
+    }
+
+    private void startNavigation(){
         Intent mapIntent = new Intent(android.content.Intent.ACTION_VIEW,
-                Uri.parse("google.navigation:q="+userPreferences.getUserPrefHomeLocation().split(",")[0]+","+userPreferences.getUserPrefHomeLocation().split(",")[1]));
+                Uri.parse("google.navigation:q=" + userPreferences.getUserPrefHomeLocation().split(",")[0] + "," + userPreferences.getUserPrefHomeLocation().split(",")[1]));
         mapIntent.setPackage("com.google.android.apps.maps");
         startActivity(mapIntent);
     }
