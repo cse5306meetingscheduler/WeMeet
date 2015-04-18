@@ -14,7 +14,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -25,6 +27,7 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.cse5306.wemeet.R;
 import com.cse5306.wemeet.preferences.UserPreferences;
@@ -34,12 +37,16 @@ import com.cse5306.wemeet.tasks.GetCurrentLocationTask;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class CreateMeetingActivity extends ActionBarActivity implements CreateMeetingTaskResponse{
 
     ProgressBar mCMProgressBar;
     ScrollView mCMForm;
+    String checkList="";
+    List<String> mCheckPref;
     LinearLayout mCMErrorLinLayout;
     TextView mCMErrorTv,mCMLocatinSelectedTv;
     NumberPicker mCMMaxPpl;
@@ -50,6 +57,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
     public static String  datePicked = null, timePicked = null;
     RadioGroup mCMRadioGrp;
     UserPreferences userPreferences;
+    CheckBox mCheckRestaurant, mCheckBar, mCheckNightLife,mCheckCafe,mCheckMall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +69,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
         mCMErrorLinLayout = (LinearLayout) findViewById(R.id.create_meet_error_lin_layout);
         mCMErrorTv = (TextView) findViewById(R.id.create_meet_screen_error_tv);
         mCMMaxPpl = (NumberPicker) findViewById(R.id.create_meet_max_ppl);
+        mCMMaxPpl.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         mCMDate = (EditText) findViewById(R.id.create_meet_date);
         mCMTime= (EditText) findViewById(R.id.create_meet_time);
         mCMBtn = (Button) findViewById(R.id.create_meet_btn);
@@ -68,8 +77,14 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
         mCMTimePicker  = (ImageButton) findViewById(R.id.create_meet_time_picker_btn);
         mCMRadioGrp = (RadioGroup) findViewById(R.id.create_meet_radio_grp);
         mCMLocatinSelectedTv = (TextView) findViewById(R.id.create_meet_location_set);
+        mCheckRestaurant = (CheckBox) findViewById(R.id.check_restaurant);
+        mCheckBar = (CheckBox) findViewById(R.id.check_bar);
+        mCheckMall= (CheckBox) findViewById(R.id.check_shopping_mall);
+        mCheckNightLife = (CheckBox) findViewById(R.id.check_night_club);
+        mCheckCafe = (CheckBox) findViewById(R.id.check_cafe);
+        mCheckPref = new ArrayList<String>();
 
-
+        hideKeyboard();
         mCMMaxPpl.setMinValue(2);
         mCMMaxPpl.setMaxValue(10);
 
@@ -113,6 +128,63 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
                 }
             }
         });
+
+
+    }
+
+    public   void onCheckChangeListen(View view){
+        checkList = "";
+        switch (view.getId()){
+            case R.id.check_restaurant:
+                if(mCheckRestaurant.isChecked()){
+                    mCheckPref.add("restaurant");
+                }else{
+                    mCheckPref.remove("restaurant");
+                }
+                break;
+            case R.id.check_bar:
+                if(mCheckBar.isChecked()){
+                    mCheckPref.add("bar");
+                }else{
+                    mCheckPref.remove("bar");
+                }
+                break;
+            case R.id.check_cafe:
+                if(mCheckCafe.isChecked()){
+                    mCheckPref.add("cafe");
+                }else{
+                    mCheckPref.remove("cafe");
+                }
+                break;
+            case R.id.check_night_club:
+                if(mCheckNightLife.isChecked()){
+                    mCheckPref.add("night_life");
+                }else{
+                    mCheckPref.remove("night_life");
+                }
+                break;
+            case R.id.check_shopping_mall:
+                if(mCheckMall.isChecked()){
+                    mCheckPref.add("shopping_mall");
+                }else{
+                    mCheckPref.remove("shopping_mall");
+                }
+                break;
+            default:
+                break;
+        }
+        for(int i=0;i<mCheckPref.size();i++){
+            if(mCheckPref.size() == 1){
+                checkList = mCheckPref.get(0);
+                break;
+            }
+            checkList += mCheckPref.get(i);
+            if(i+1 != mCheckPref.size()){
+                checkList += "|";
+            }
+
+        }
+        Toast.makeText(getApplicationContext(),checkList,Toast.LENGTH_LONG).show();
     }
 
     public void attemptCreateMeeting(){
@@ -131,17 +203,25 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
 
     };
 
+    public void hideKeyboard(){
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
+    }
 
     private boolean validateInput(){
 
         if(datePicked == null){
-            mCMDate.setError("Date not set");
+            showError(true,"Date not set");
             return false;
         }else if(timePicked == null){
-            mCMTime.setError("Time not set");
+            showError(true,"Time not set");
             return false;
         }else if(mlocationString == null){
             showError(true,"Location not set");
+            return false;
+        }else if(checkList.length() == 0 || mCheckPref.size()==0){
+            showError(true,"Select at-least one meeting place");
             return false;
         }
 

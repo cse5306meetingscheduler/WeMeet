@@ -19,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cse5306.wemeet.R;
 import com.cse5306.wemeet.adapters.TabsPagerAdapter;
@@ -105,8 +104,8 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
         View dialogView = inflater.inflate(R.layout.alert_join_group, null);
         final EditText joinGrpIdEt = (EditText) dialogView.findViewById(R.id.join_grp_id);
         RadioGroup radioGroup = (RadioGroup) dialogView.findViewById(R.id.join_meet_radio_grp);
-        RadioButton joinHomeLoc = (RadioButton) dialogView.findViewById(R.id.join_meet_radio_home_loc);
-        RadioButton joinCurrLoc = (RadioButton) dialogView.findViewById(R.id.join_meet_radio_curr_loc);
+        final RadioButton joinHomeLoc = (RadioButton) dialogView.findViewById(R.id.join_meet_radio_home_loc);
+        final RadioButton joinCurrLoc = (RadioButton) dialogView.findViewById(R.id.join_meet_radio_curr_loc);
         final TextView joinMeetLocSetTv = (TextView) dialogView.findViewById(R.id.join_meet_location_set);
         joinMeetLocSetTv.setText(userPreferences.getUserPrefHomeLocation());
         locationStr = userPreferences.getUserPrefHomeLocation();
@@ -126,8 +125,9 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
 
         alert.setPositiveButton("Join", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                joinGrpId = joinGrpIdEt.getText().toString();
-                Toast.makeText(getApplication(),locationStr,Toast.LENGTH_SHORT).show();
+                if(joinGrpIdEt.getText().toString().length() != 0) {
+                    joinGrpId = joinGrpIdEt.getText().toString();
+                }
                 callJoinMeetingTask();
             }
         });

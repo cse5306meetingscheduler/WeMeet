@@ -49,17 +49,15 @@
                android:layout_height="wrap_content">
 
                <TextView
-                   android:layout_width="0dp"
-                   android:layout_weight="2"
+                   android:layout_width="wrap_content"
                    android:gravity="center"
                    android:layout_height="fill_parent"
                    android:text="Max Number of people: "/>
 
                <NumberPicker
                    android:id="@+id/create_meet_max_ppl"
-                   android:layout_width="0dp"
-                   android:layout_weight="3"
                    android:gravity="center"
+                   android:layout_width="wrap_content"
                    android:layout_height="fill_parent"
                   >
 
@@ -91,6 +89,9 @@
                 <ImageButton
                     android:id="@+id/create_meet_date_picker_btn"
                     android:layout_width="0dp"
+                    android:scaleType="centerInside"
+
+                    android:src="@drawable/ic_date_picker"
                     android:layout_weight="1"
                     android:layout_height="fill_parent" />
             </LinearLayout>
@@ -121,7 +122,60 @@
                     android:id="@+id/create_meet_time_picker_btn"
                     android:layout_width="0dp"
                     android:layout_weight="1"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_time_picker"
                     android:layout_height="fill_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Choose at-least one:"/>
+
+                <GridLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:columnCount="2"
+                    android:rowCount="3"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/check_restaurant"
+                        android:layout_width="wrap_content"
+                        android:onClick="onCheckChangeListen"
+                        android:text="Restaurant"
+                        />
+                    <CheckBox
+                        android:id="@+id/check_bar"
+                        android:layout_width="wrap_content"
+                        android:onClick="onCheckChangeListen"
+                        android:text="Bar"
+                        />
+                    <CheckBox
+                        android:id="@+id/check_shopping_mall"
+                        android:layout_width="wrap_content"
+                        android:onClick="onCheckChangeListen"
+                        android:text="Shopping mall"
+                        />
+                    <CheckBox
+                        android:id="@+id/check_night_club"
+                        android:layout_width="wrap_content"
+                        android:onClick="onCheckChangeListen"
+                        android:text="Night club"
+                        />
+                    <CheckBox
+                        android:id="@+id/check_cafe"
+                        android:layout_width="wrap_content"
+                        android:onClick="onCheckChangeListen"
+                        android:text="Cafe"
+                        />
+                </GridLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -162,10 +216,6 @@
                    android:layout_height="wrap_content" />
 
             </LinearLayout>
-<!--
-
--->
-
 
             <Button
                 android:id="@+id/create_meet_btn"

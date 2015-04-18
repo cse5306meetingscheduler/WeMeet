@@ -24,13 +24,15 @@ public class CreateMeetingTask extends AsyncTask<String,String,String> {
     public CreateMeetingTaskResponse response = null;
     int num_of_ppl;
     String date,time,location,user_id;
+    String checkList;
 
-    public CreateMeetingTask(String date, String time, String location, String user_id, int num_of_ppl) {
+    public CreateMeetingTask(String date, String time, String location, String user_id, int num_of_ppl,String checkList) {
         this.date = date;
         this.time = time;
         this.location = location;
         this.user_id = user_id;
         this.num_of_ppl = num_of_ppl;
+        this.checkList = checkList;
     }
 
     @Override
@@ -46,6 +48,7 @@ public class CreateMeetingTask extends AsyncTask<String,String,String> {
             nameValuePairs.add(new BasicNameValuePair("meeting_time", time));
             nameValuePairs.add(new BasicNameValuePair("meeting_date", date));
             nameValuePairs.add(new BasicNameValuePair("location", location));
+            nameValuePairs.add(new BasicNameValuePair("list",checkList));
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
             response = httpclient.execute(httppost);
 
