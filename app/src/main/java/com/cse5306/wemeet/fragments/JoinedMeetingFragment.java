@@ -65,13 +65,13 @@ public class JoinedMeetingFragment extends Fragment {
                         meetingsYouJoined.get(position).getFinalDestination().equalsIgnoreCase("null")) {
                     Intent meetingDetails = new Intent(getActivity(), MeetingDetailsActivity.class);
                     meetingDetails.putExtra("fragmentInflateType","suggest_list");
-                    meetingDetails.putExtra("groupId",String.valueOf(meetingDetailsList.get(position).getGroupId()));
+                    meetingDetails.putExtra("groupId",String.valueOf(meetingsYouJoined.get(position).getGroupId()));
                     startActivity(meetingDetails);
                 }else if(!meetingsYouJoined.get(position).getMidpoint().equalsIgnoreCase("null") &&
                         !meetingsYouJoined.get(position).getFinalDestination().equalsIgnoreCase("null")){
                     Intent meetingDetails = new Intent(getActivity(), MeetingDetailsActivity.class);
                     meetingDetails.putExtra("fragmentInflateType","map");
-                    meetingDetails.putExtra("groupId",String.valueOf(meetingDetailsList.get(position).getGroupId()));
+                    meetingDetails.putExtra("groupId",String.valueOf(meetingsYouJoined.get(position).getGroupId()));
                     startActivity(meetingDetails);
                 }
 

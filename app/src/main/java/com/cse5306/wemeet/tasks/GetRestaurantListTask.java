@@ -27,6 +27,7 @@ import java.util.List;
 public class GetRestaurantListTask extends AsyncTask<String,String,List<Restaurant>> {
 
     List<Restaurant> restaurantList;
+    public GetRestaurantListTaskResponse response = null;
     String group_id;
 
     public GetRestaurantListTask(String group_id) {
@@ -61,7 +62,7 @@ public class GetRestaurantListTask extends AsyncTask<String,String,List<Restaura
                 restaurant.setLatitude(jsonArray.getJSONObject(i).getDouble("latitude"));
                 restaurant.setLongitude(jsonArray.getJSONObject(i).getDouble("longitude"));
 
-                Log.d("rest",jsonArray.getJSONObject(i).getString("name"));
+                Log.d("rest",jsonArray.getJSONObject(i).getString("image"));
 
                 restaurantList.add(restaurant);
             }
@@ -81,5 +82,6 @@ public class GetRestaurantListTask extends AsyncTask<String,String,List<Restaura
     @Override
     protected void onPostExecute(List<Restaurant> restaurants) {
         super.onPostExecute(restaurants);
+        response.processFinish(restaurants);
     }
 }

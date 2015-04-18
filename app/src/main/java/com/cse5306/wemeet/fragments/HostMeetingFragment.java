@@ -64,13 +64,13 @@ public class HostMeetingFragment extends Fragment {
                         meetingsYouHost.get(position).getFinalDestination().equalsIgnoreCase("null")) {
                     Intent meetingDetails = new Intent(getActivity(), MeetingDetailsActivity.class);
                     meetingDetails.putExtra("fragmentInflateType","suggest_list");
-                    meetingDetails.putExtra("groupId",String.valueOf(meetingDetailsList.get(position).getGroupId()));
+                    meetingDetails.putExtra("groupId",String.valueOf(meetingsYouHost.get(position).getGroupId()));
                     startActivity(meetingDetails);
                 }else if(!meetingsYouHost.get(position).getMidpoint().equalsIgnoreCase("null") &&
                         !meetingsYouHost.get(position).getFinalDestination().equalsIgnoreCase("null")){
                     Intent meetingDetails = new Intent(getActivity(), MeetingDetailsActivity.class);
                     meetingDetails.putExtra("fragmentInflateType","map");
-                    meetingDetails.putExtra("groupId",String.valueOf(meetingDetailsList.get(position).getGroupId()));
+                    meetingDetails.putExtra("groupId",String.valueOf(meetingsYouHost.get(position).getGroupId()));
                     startActivity(meetingDetails);
                 }
 
