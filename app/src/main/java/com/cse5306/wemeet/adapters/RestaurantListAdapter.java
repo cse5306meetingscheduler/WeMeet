@@ -57,8 +57,13 @@ public class RestaurantListAdapter extends BaseAdapter {
 
 
         restaurantName.setText(restaurantList.get(position).getName());
-        restaurantRating.setText(String.valueOf(restaurantList.get(position).getRating()));
-        restaurantPrice.setText(String.valueOf(restaurantList.get(position).getPrice_level()));
+        restaurantRating.setText(String.valueOf(restaurantList.get(position).getRating())+"/5.0");
+
+        String priceLevel = "";
+        for(int i=0;i<restaurantList.get(position).getPrice_level();i++){
+            priceLevel += "$";
+        }
+        restaurantPrice.setText(priceLevel);
         restaurantAddress.setText(restaurantList.get(position).getAddress());
 
         if(!restaurantList.get(position).getImage().equalsIgnoreCase("null")){

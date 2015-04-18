@@ -173,7 +173,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@string/register_text"
+                android:text="@string/create_meeting_text"
                 android:textStyle="bold" />
 
         </LinearLayout>

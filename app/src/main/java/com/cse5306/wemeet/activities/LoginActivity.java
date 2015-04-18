@@ -141,6 +141,13 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
             cancel = true;
         }
 
+        if (mUserNameView.getText().toString().length() <= 6) {
+            mUserNameView.setError("Invalid username");
+            focusView = mUserNameView;
+            cancel = true;
+        }
+
+
         if(!isNetworkConnected()){
             focusView = mSignInButton;
             showError(true,"No internet connection");
@@ -159,8 +166,7 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() > 6;
     }
 
     private void showError(boolean show,String message){
