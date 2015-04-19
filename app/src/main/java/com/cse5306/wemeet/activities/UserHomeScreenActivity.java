@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -45,6 +46,7 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
     String joinGrpId = null,locationStr = null;
     LinearLayout mHomeScreenLinLayout;
     TextView mHomeScreenResTv;
+    ProgressBar mHomeScreenProgress;
     ActionBar actionBar;
     ViewPager mViewPager;
     Toolbar user_home_screen_toolbar;
@@ -63,6 +65,8 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
         user_home_screen_toolbar = (Toolbar) findViewById(R.id.user_home_screen_toolbar);
         setSupportActionBar(user_home_screen_toolbar);
 
+
+        mHomeScreenProgress = (ProgressBar) findViewById(R.id.user_home_screen_progress);
         floatingActionMenu = (FloatingActionMenu) findViewById(R.id.floating_menu);
         mFloatingActionCreateMeeting = (FloatingActionButton) findViewById(R.id.home_create_meeting_button);
         mFloatingActionJoinMeeting = (FloatingActionButton) findViewById(R.id.home_join_meeting_button);
@@ -71,10 +75,8 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
         mViewPager = (ViewPager) findViewById(R.id.pager);
         meetingDetailsList = new ArrayList<MeetingDetails>();
         userPreferences = new UserPreferences(getApplicationContext());
-        //Toast.makeText(getApplicationContext(), userPreferences.getUserPrefHomeLocation(), Toast.LENGTH_SHORT).show();
 
-        //actionBar = getSupportActionBar();
-        //actionBar.setTitle(userPreferences.getSessionUserPrefUsername() + " - Your Meetings");
+        getSupportActionBar().setTitle(userPreferences.getSessionUserPrefUsername() + " - Your Meetings");
 
         mFloatingActionCreateMeeting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,12 +95,22 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
                 promptUserInput();
             }
         });
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        updateMeetingList();
+    }
+
+    private  void updateMeetingList(){
+        mHomeScreenProgress.setVisibility(View.VISIBLE);
+        mViewPager.setVisibility(View.GONE);
         MeetingListTask meetingListTask = new MeetingListTask(userPreferences.getSessionUserPrefUsername());
         meetingListTask.response=this;
         meetingListTask.execute();
-
     }
+
 
     private void promptUserInput() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -209,7 +221,7 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
                 }
             }, 4000);
         }
-
+        updateMeetingList();
     }
 
     private void showResponse(final boolean show,final String res){
@@ -238,6 +250,8 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
         tabsPagerAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         mViewPager.setPageTransformer(true,new ZoomOutPageTransformer());
         mViewPager.setAdapter(tabsPagerAdapter);
+        mHomeScreenProgress.setVisibility(View.GONE);
+        mViewPager.setVisibility(View.VISIBLE);
 
     }
 

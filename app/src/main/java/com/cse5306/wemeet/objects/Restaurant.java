@@ -5,6 +5,7 @@ package com.cse5306.wemeet.objects;
  */
 public class Restaurant {
 
+    int locId;
     String name;
     int price_level;
     float rating;
@@ -12,6 +13,14 @@ public class Restaurant {
     double latitude;
     double longitude;
     String image;
+
+    public int getLocId() {
+        return locId;
+    }
+
+    public void setLocId(int locId) {
+        this.locId = locId;
+    }
 
     public double getLatitude() {
         return latitude;

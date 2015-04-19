@@ -17,38 +17,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Sathvik on 10/04/15.
+ * Created by Sathvik on 18/04/15.
  */
-public class CreateMeetingTask extends AsyncTask<String,String,String> {
+public class ChooseRestaurantTask extends AsyncTask<String,String,String> {
 
-    public CreateMeetingTaskResponse response = null;
-    int num_of_ppl;
-    String date,time,location,user_id;
-    String checkList;
+    String username,groupId;
+    int restaurantId;
+    public ChooseRestaurantTaskResponse response=null;
 
-    public CreateMeetingTask(String date, String time, String location, String user_id, int num_of_ppl,String checkList) {
-        this.date = date;
-        this.time = time;
-        this.location = location;
-        this.user_id = user_id;
-        this.num_of_ppl = num_of_ppl;
-        this.checkList = checkList;
+    public ChooseRestaurantTask(String username, String groupId, int restaurantId) {
+        this.username = username;
+        this.groupId = groupId;
+        this.restaurantId = restaurantId;
     }
 
     @Override
     protected String doInBackground(String... params) {
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("https://wemeet-sathvik1709.c9.io/create_meeting.php");
+        HttpPost httppost = new HttpPost("https://wemeet-sathvik1709.c9.io/final_destination.php");
         HttpResponse response = null;
         try {
             // Add your data
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-            nameValuePairs.add(new BasicNameValuePair("max_ppl", String.valueOf(num_of_ppl)));
-            nameValuePairs.add(new BasicNameValuePair("username", user_id));
-            nameValuePairs.add(new BasicNameValuePair("meeting_time", time));
-            nameValuePairs.add(new BasicNameValuePair("meeting_date", date));
-            nameValuePairs.add(new BasicNameValuePair("location", location));
-            nameValuePairs.add(new BasicNameValuePair("categories",checkList));
+            nameValuePairs.add(new BasicNameValuePair("loc_id", String.valueOf(restaurantId)));
+            nameValuePairs.add(new BasicNameValuePair("username", username));
+            nameValuePairs.add(new BasicNameValuePair("group_id", groupId));
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
             response = httpclient.execute(httppost);
 

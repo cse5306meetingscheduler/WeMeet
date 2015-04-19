@@ -53,7 +53,7 @@ public class GetRestaurantListTask extends AsyncTask<String,String,List<Restaura
             JSONArray jsonArray = new JSONArray(res);
             for(int i=0;i<jsonArray.length();i++){
                 Restaurant restaurant = new Restaurant();
-
+                restaurant.setLocId(jsonArray.getJSONObject(i).getInt("loc_id"));
                 restaurant.setName(jsonArray.getJSONObject(i).getString("name"));
                 restaurant.setAddress(jsonArray.getJSONObject(i).getString("address"));
                 restaurant.setPrice_level(jsonArray.getJSONObject(i).getInt("price_level"));

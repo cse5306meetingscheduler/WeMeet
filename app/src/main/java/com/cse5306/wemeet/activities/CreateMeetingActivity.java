@@ -28,7 +28,6 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.cse5306.wemeet.R;
 import com.cse5306.wemeet.preferences.UserPreferences;
@@ -59,7 +58,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
     public static String  datePicked = null, timePicked = null;
     RadioGroup mCMRadioGrp;
     UserPreferences userPreferences;
-    CheckBox mCheckRestaurant, mCheckBar, mCheckNightLife,mCheckCafe,mCheckMall;
+    CheckBox mCheckRestaurant, mCheckBar, mCheckLibrary,mCheckCafe,mCheckMall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +84,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
         mCheckRestaurant = (CheckBox) findViewById(R.id.check_restaurant);
         mCheckBar = (CheckBox) findViewById(R.id.check_bar);
         mCheckMall= (CheckBox) findViewById(R.id.check_shopping_mall);
-        mCheckNightLife = (CheckBox) findViewById(R.id.check_night_club);
+        mCheckLibrary = (CheckBox) findViewById(R.id.check_library);
         mCheckCafe = (CheckBox) findViewById(R.id.check_cafe);
         mCheckPref = new ArrayList<String>();
 
@@ -159,11 +158,11 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
                     mCheckPref.remove("cafe");
                 }
                 break;
-            case R.id.check_night_club:
-                if(mCheckNightLife.isChecked()){
-                    mCheckPref.add("night_life");
+            case R.id.check_library:
+                if(mCheckLibrary.isChecked()){
+                    mCheckPref.add("library");
                 }else{
-                    mCheckPref.remove("night_life");
+                    mCheckPref.remove("library");
                 }
                 break;
             case R.id.check_shopping_mall:
@@ -187,7 +186,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
             }
 
         }
-        Toast.makeText(getApplicationContext(),checkList,Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(),checkList,Toast.LENGTH_LONG).show();
     }
 
     public void attemptCreateMeeting(){

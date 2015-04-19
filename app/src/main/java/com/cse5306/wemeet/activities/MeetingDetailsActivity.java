@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -16,6 +17,8 @@ import com.cse5306.wemeet.R;
 import com.cse5306.wemeet.adapters.RestaurantListAdapter;
 import com.cse5306.wemeet.objects.Restaurant;
 import com.cse5306.wemeet.preferences.UserPreferences;
+import com.cse5306.wemeet.tasks.ChooseRestaurantTask;
+import com.cse5306.wemeet.tasks.ChooseRestaurantTaskResponse;
 import com.cse5306.wemeet.tasks.GetRestaurantListTask;
 import com.cse5306.wemeet.tasks.GetRestaurantListTaskResponse;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -28,7 +31,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MeetingDetailsActivity extends ActionBarActivity implements OnMapReadyCallback,GetRestaurantListTaskResponse {
+public class MeetingDetailsActivity extends ActionBarActivity implements OnMapReadyCallback,
+        GetRestaurantListTaskResponse,ChooseRestaurantTaskResponse {
 
     UserPreferences userPreferences;
     LinearLayout mSelectRestaurant,mMap;
@@ -53,7 +57,7 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
 
         Intent intent = getIntent();
         String message = intent.getStringExtra("fragmentInflateType");
-        String groupId = intent.getStringExtra("groupId");
+        final String groupId = intent.getStringExtra("groupId");
         Log.d("asd", groupId);
 
 
@@ -70,6 +74,22 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
         }
+
+        selectRestaurantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    sendRestaurant(restaurantList.get(position),groupId);
+            }
+        });
+
+    }
+
+    private void sendRestaurant(Restaurant restaurant,String group_id){
+        ChooseRestaurantTask chooseRestaurantTask = new ChooseRestaurantTask(userPreferences.getSessionUserPrefUsername(),
+                                                group_id,
+                                                restaurant.getLocId());
+        chooseRestaurantTask.response = this;
+        chooseRestaurantTask.execute();
 
 
     }
@@ -119,8 +139,13 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
 
     @Override
     public void processFinish(List<Restaurant> output) {
-
+        restaurantList = output;
         RestaurantListAdapter adapter = new RestaurantListAdapter(output,getApplicationContext());
         selectRestaurantListView.setAdapter(adapter);
+    }
+
+    @Override
+    public void processFinish(String res) {
+        Log.d("choose rest res",res);
     }
 }

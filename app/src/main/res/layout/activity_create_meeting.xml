@@ -169,10 +169,10 @@
                         android:text="Shopping mall"
                         />
                     <CheckBox
-                        android:id="@+id/check_night_club"
+                        android:id="@+id/check_library"
                         android:layout_width="wrap_content"
                         android:onClick="onCheckChangeListen"
-                        android:text="Night club"
+                        android:text="Library"
                         />
                     <CheckBox
                         android:id="@+id/check_cafe"
