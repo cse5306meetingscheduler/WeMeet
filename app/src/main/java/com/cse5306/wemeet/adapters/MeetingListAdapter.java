@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.cse5306.wemeet.R;
 import com.cse5306.wemeet.objects.MeetingDetails;
+import com.cse5306.wemeet.views.CircleText;
 
 import java.util.List;
 
@@ -47,13 +48,13 @@ public class MeetingListAdapter extends BaseAdapter {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = inflater.inflate(R.layout.meeting_list_item,null);
 
-        TextView meetingGroupId = (TextView) convertView.findViewById(R.id.meet_list_item_group_id);
+        CircleText meetingGroupId = (CircleText) convertView.findViewById(R.id.meet_list_item_group_id);
         TextView meetingDate = (TextView) convertView.findViewById(R.id.meet_list_item_date);
         TextView meetingTime = (TextView) convertView.findViewById(R.id.meet_list_item_time);
         TextView meetingPoint = (TextView) convertView.findViewById(R.id.meet_list_item_meeting_point);
         TextView meetingPlace = (TextView) convertView.findViewById(R.id.meet_list_item_meeting_place);
 
-        meetingGroupId.setText(String.valueOf(meetingDetailsList.get(position).getGroupId()));
+        meetingGroupId.setmText(String.valueOf(meetingDetailsList.get(position).getGroupId()));
         meetingDate.setText(meetingDetailsList.get(position).getMeetingDate());
         meetingTime.setText(meetingDetailsList.get(position).getMeetingTime());
 

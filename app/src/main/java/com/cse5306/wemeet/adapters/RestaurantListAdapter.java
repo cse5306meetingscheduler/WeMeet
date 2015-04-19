@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.cse5306.wemeet.R;
 import com.cse5306.wemeet.objects.Restaurant;
+import com.cse5306.wemeet.preferences.UserPreferences;
+import com.cse5306.wemeet.tasks.CalculateDistanceTask;
 import com.cse5306.wemeet.tasks.DownloadImageTask;
 
 import java.util.List;
@@ -54,10 +56,15 @@ public class RestaurantListAdapter extends BaseAdapter {
         TextView restaurantRating = (TextView) convertView.findViewById(R.id.restaurant_rating);
         TextView restaurantPrice = (TextView) convertView.findViewById(R.id.restaurant_price);
         TextView restaurantAddress = (TextView) convertView.findViewById(R.id.restaurant_addr);
+        TextView distAndTime = (TextView) convertView.findViewById(R.id.distAndTime);
 
 
         restaurantName.setText(restaurantList.get(position).getName());
         restaurantRating.setText(String.valueOf(restaurantList.get(position).getRating())+"/5.0");
+
+        CalculateDistanceTask calculateDistanceTask =  new CalculateDistanceTask(distAndTime);
+        calculateDistanceTask.execute(new UserPreferences(context).getUserPrefHomeLocation(),
+                restaurantList.get(position).getLatitude()+","+restaurantList.get(position).getLongitude());
 
         String priceLevel = "";
         for(int i=0;i<restaurantList.get(position).getPrice_level();i++){
@@ -73,6 +80,7 @@ public class RestaurantListAdapter extends BaseAdapter {
             DownloadImageTask downloadImageTask = new DownloadImageTask(restaurantImage);
             downloadImageTask.execute(url);
         }
+
 
         return convertView;
     }

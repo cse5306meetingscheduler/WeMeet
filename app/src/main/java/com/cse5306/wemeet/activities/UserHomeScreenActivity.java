@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -95,6 +96,14 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
                 promptUserInput();
             }
         });
+
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        floatingActionMenu.close(true);
+        return super.onTouchEvent(event);
+
     }
 
     @Override
