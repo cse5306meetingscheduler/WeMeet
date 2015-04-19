@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +34,7 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
     LinearLayout mSelectRestaurant,mMap;
     ListView selectRestaurantListView;
     List<Restaurant> restaurantList;
+    Toolbar meeting_details_toolbar;
 
 
     @Override
@@ -44,7 +46,10 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
         mMap = (LinearLayout) findViewById(R.id.meeting_details_map_fragment);
         mSelectRestaurant = (LinearLayout) findViewById(R.id.select_restaurant_list_layout);
         selectRestaurantListView = (ListView) findViewById(R.id.select_restaurant_list);
+        meeting_details_toolbar = (Toolbar) findViewById(R.id.meeting_details_toolbar);
         restaurantList = new ArrayList<Restaurant>();
+
+        setSupportActionBar(meeting_details_toolbar);
 
         Intent intent = getIntent();
         String message = intent.getStringExtra("fragmentInflateType");
@@ -105,9 +110,9 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+       /* if (id == R.id.action_settings) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }

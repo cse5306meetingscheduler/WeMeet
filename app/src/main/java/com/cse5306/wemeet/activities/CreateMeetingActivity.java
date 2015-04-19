@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
@@ -46,6 +47,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
     ProgressBar mCMProgressBar;
     ScrollView mCMForm;
     String checkList="";
+    Toolbar create_meeting_toolbar;
     List<String> mCheckPref;
     LinearLayout mCMErrorLinLayout;
     TextView mCMErrorTv,mCMLocatinSelectedTv;
@@ -63,6 +65,9 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_meeting);
+
+        create_meeting_toolbar = (Toolbar) findViewById(R.id.create_meeting_toolbar);
+        setSupportActionBar(create_meeting_toolbar);
 
         mCMProgressBar =(ProgressBar) findViewById(R.id.create_meet_progress);
         mCMForm = (ScrollView) findViewById(R.id.create_meeting_form);
@@ -128,8 +133,6 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
                 }
             }
         });
-
-
     }
 
     public   void onCheckChangeListen(View view){
@@ -196,7 +199,8 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
                     timePicked,
                     mlocationString,
                     userPreferences.getSessionUserPrefUsername(),
-                   mCMMaxPpl.getValue());
+                   mCMMaxPpl.getValue(),
+                    checkList);
             createMeetingTask.response = this;
             createMeetingTask.execute();
         }
@@ -212,10 +216,10 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
     private boolean validateInput(){
 
         if(datePicked == null){
-            showError(true,"Date not set");
+            showError(true, "Date not set");
             return false;
         }else if(timePicked == null){
-            showError(true,"Time not set");
+            showError(true, "Time not set");
             return false;
         }else if(mlocationString == null){
             showError(true,"Location not set");
@@ -266,9 +270,9 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+       /* if (id == R.id.action_settings) {
             return true;
-        }
+        }*/
         return super.onOptionsItemSelected(item);
     }
 

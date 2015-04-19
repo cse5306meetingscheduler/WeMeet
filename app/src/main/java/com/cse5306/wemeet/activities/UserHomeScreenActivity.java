@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,7 +47,7 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
     TextView mHomeScreenResTv;
     ActionBar actionBar;
     ViewPager mViewPager;
-
+    Toolbar user_home_screen_toolbar;
     List<MeetingDetails> meetingDetailsList;
     TabsPagerAdapter tabsPagerAdapter;
     FloatingActionMenu floatingActionMenu;
@@ -59,6 +60,9 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home_screen);
 
+        user_home_screen_toolbar = (Toolbar) findViewById(R.id.user_home_screen_toolbar);
+        setSupportActionBar(user_home_screen_toolbar);
+
         floatingActionMenu = (FloatingActionMenu) findViewById(R.id.floating_menu);
         mFloatingActionCreateMeeting = (FloatingActionButton) findViewById(R.id.home_create_meeting_button);
         mFloatingActionJoinMeeting = (FloatingActionButton) findViewById(R.id.home_join_meeting_button);
@@ -69,8 +73,8 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
         userPreferences = new UserPreferences(getApplicationContext());
         //Toast.makeText(getApplicationContext(), userPreferences.getUserPrefHomeLocation(), Toast.LENGTH_SHORT).show();
 
-        actionBar = getSupportActionBar();
-        actionBar.setTitle(userPreferences.getSessionUserPrefUsername() + " - Your Meetings");
+        //actionBar = getSupportActionBar();
+        //actionBar.setTitle(userPreferences.getSessionUserPrefUsername() + " - Your Meetings");
 
         mFloatingActionCreateMeeting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,11 +183,7 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
             startActivity(intentLoginIntent);
             finish();
             return true;
-        }else if(id == R.id.details){
-            Intent intent = new Intent(this,MeetingDetailsActivity.class);
-            startActivity(intent);
         }
-
         return super.onOptionsItemSelected(item);
     }
 

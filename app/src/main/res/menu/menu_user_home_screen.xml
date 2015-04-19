@@ -5,7 +5,4 @@
 
     <item android:id="@+id/logout" android:title="@string/logout_str"
         android:orderInCategory="100" app:showAsAction="never" />
-
-    <item android:id="@+id/details" android:title="Details"
-        android:orderInCategory="99" app:showAsAction="always"/>
 </menu>

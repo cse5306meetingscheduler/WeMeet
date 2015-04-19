@@ -4,11 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:animateLayoutChanges="true"
     tools:context="com.cse5306.wemeet.activities.RegisterActivity">
+
+    <include
+        android:id="@+id/register_toolbar"
+        layout="@layout/actionbar" />
 
     <ProgressBar
         android:id="@+id/reg_progress"
@@ -20,6 +21,10 @@
 
     <ScrollView
         android:id="@+id/register_form"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

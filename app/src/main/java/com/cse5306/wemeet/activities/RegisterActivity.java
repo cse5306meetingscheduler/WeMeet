@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -38,6 +39,7 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
     LinearLayout mRegErrorLinLayout;
     TextView mRegScreenErrorTv;
     ProgressBar mRegProgressBar;
+    Toolbar register_toolbar;
     TextView mHomeLocationTv;
     Button mFetchLocationBtn;
     boolean dev_id_set = false,dev_loc_set = false;
@@ -50,6 +52,10 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        register_toolbar = (Toolbar) findViewById(R.id.register_toolbar);
+        setSupportActionBar(register_toolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         prefs = new UserPreferences(getApplicationContext());
         mRegPassword = (EditText) findViewById(R.id.reg_password);
