@@ -28,11 +28,14 @@ import com.cse5306.wemeet.tasks.DestinationDetailsTaskResponse;
 import com.cse5306.wemeet.tasks.DownloadImageTask;
 import com.cse5306.wemeet.tasks.GetRestaurantListTask;
 import com.cse5306.wemeet.tasks.GetRestaurantListTaskResponse;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONException;
@@ -52,6 +55,7 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
     List<Restaurant> restaurantList;
     Toolbar meeting_details_toolbar;
     String groupId;
+    GoogleMap map;
     ImageView meetingDetailsImageView;
     TextView mRestaurantName,mRestaurantRating,mRestaurantPrice,mRestaurantAddress,mRestaurantDistance;
 
@@ -88,7 +92,7 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
 
         if(message.equalsIgnoreCase("suggest_list")) {
             mSelectRestaurant.setVisibility(View.VISIBLE);
-            getSupportActionBar().setTitle("Meeting details for group "+groupId);
+            getSupportActionBar().setTitle("Choose your choice of place for "+groupId);
             GetRestaurantListTask getRestaurantListTask = new GetRestaurantListTask(groupId);
             getRestaurantListTask.response = this;
             getRestaurantListTask.execute();
@@ -101,14 +105,6 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
             mapFragment.getMapAsync(this);
             fetchDestinationDetails();
         }
-
-        /*selectRestaurantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    sendRestaurant(restaurantList.get(position),groupId);
-            }
-        });*/
-
     }
 
     private void fetchDestinationDetails(){
@@ -130,7 +126,7 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
+        map = googleMap;
         LatLng latLng = new LatLng(Double.parseDouble(userPreferences.getUserPrefHomeLocation().split(",")[0]),
                 Double.parseDouble(userPreferences.getUserPrefHomeLocation().split(",")[1]));
 
@@ -213,10 +209,44 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
                     + "&key=AIzaSyA0-lltBKfC00Q-W0n04Zy46ha6QTDqtAc";
             DownloadImageTask downloadImageTask = new DownloadImageTask(meetingDetailsImageView);
             downloadImageTask.execute(url);
+            buildMap(jsonObject.getString("latitude"),jsonObject.getString("longitude"));
+
+
         }catch (JSONException e){
             e.getMessage();
         }
 
 
+    }
+
+    private void buildMap(String destLatStr, String destLngStr){
+
+        double srcLat = Double.parseDouble(userPreferences.getUserPrefHomeLocation().split(",")[0]);
+        double srcLng = Double.parseDouble(userPreferences.getUserPrefHomeLocation().split(",")[1]);
+        double destLat = Double.parseDouble(destLatStr);
+        double destLng = Double.parseDouble(destLngStr);
+
+
+        Marker srcMarker = map.addMarker(new MarkerOptions().position(new LatLng(srcLat,srcLng)));
+        Marker destMarker = map.addMarker(new MarkerOptions().position(new LatLng(destLat,destLng)));
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                return true;
+            }
+        });
+        List<Marker> markers = new ArrayList<Marker>();
+        markers.add(srcMarker);
+        markers.add(destMarker);
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker marker : markers) {
+            builder.include(marker.getPosition());
+        }
+        LatLngBounds bounds = builder.build();
+        int padding = 200; // offset from edges of the map in pixels
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        map.moveCamera(cu);
+        map.animateCamera(cu);
     }
 }
