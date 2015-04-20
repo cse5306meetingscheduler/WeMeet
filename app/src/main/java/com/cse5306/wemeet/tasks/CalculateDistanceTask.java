@@ -55,7 +55,8 @@ public class CalculateDistanceTask extends AsyncTask<String,String,String> {
 
                 JSONObject jsonObject= new JSONObject(builder.toString());
 
-                result ="Distance: "+ jsonObject.getJSONArray("rows").getJSONObject(0).getJSONArray("elements")
+                result = "From your home location: \n";
+                result +="Distance: "+ jsonObject.getJSONArray("rows").getJSONObject(0).getJSONArray("elements")
                             .getJSONObject(0).getJSONObject("distance").getString("text");
 
                 result += "\n"+"Approx time: "+jsonObject.getJSONArray("rows").getJSONObject(0).getJSONArray("elements")

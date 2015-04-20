@@ -12,16 +12,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.cse5306.wemeet.R;
 import com.cse5306.wemeet.adapters.RestaurantListRvAdapter;
 import com.cse5306.wemeet.objects.Restaurant;
 import com.cse5306.wemeet.preferences.UserPreferences;
+import com.cse5306.wemeet.tasks.CalculateDistanceTask;
 import com.cse5306.wemeet.tasks.ChooseRestaurantTask;
 import com.cse5306.wemeet.tasks.ChooseRestaurantTaskResponse;
 import com.cse5306.wemeet.tasks.DestinationDetailsTask;
 import com.cse5306.wemeet.tasks.DestinationDetailsTaskResponse;
+import com.cse5306.wemeet.tasks.DownloadImageTask;
 import com.cse5306.wemeet.tasks.GetRestaurantListTask;
 import com.cse5306.wemeet.tasks.GetRestaurantListTaskResponse;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,6 +34,9 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +52,8 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
     List<Restaurant> restaurantList;
     Toolbar meeting_details_toolbar;
     String groupId;
+    ImageView meetingDetailsImageView;
+    TextView mRestaurantName,mRestaurantRating,mRestaurantPrice,mRestaurantAddress,mRestaurantDistance;
 
 
 
@@ -56,6 +65,12 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
         userPreferences = new UserPreferences(this);
         mMap = (LinearLayout) findViewById(R.id.meeting_details_map_fragment);
         mSelectRestaurant = (LinearLayout) findViewById(R.id.select_restaurant_list_layout);
+        meetingDetailsImageView = (ImageView) findViewById(R.id.meeting_details_rest_image);
+        mRestaurantName = (TextView) findViewById(R.id.meeting_details_restaurant_name);
+        mRestaurantRating = (TextView) findViewById(R.id.meeting_details_rating);
+        mRestaurantPrice = (TextView) findViewById(R.id.meeting_details_price);
+        mRestaurantAddress= (TextView) findViewById(R.id.meeting_details_address);
+        mRestaurantDistance = (TextView) findViewById(R.id.meeting_details_destination_distance);
         // recycler view
         selectRestaurantRecyclerView = (RecyclerView) findViewById(R.id.select_restaurant_list);
         mLayoutManager = new LinearLayoutManager(this);
@@ -69,15 +84,17 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
         Log.d("asd", groupId);
 
         setSupportActionBar(meeting_details_toolbar);
-        getSupportActionBar().setTitle("Meeting details for group "+groupId);
+
 
         if(message.equalsIgnoreCase("suggest_list")) {
             mSelectRestaurant.setVisibility(View.VISIBLE);
+            getSupportActionBar().setTitle("Meeting details for group "+groupId);
             GetRestaurantListTask getRestaurantListTask = new GetRestaurantListTask(groupId);
             getRestaurantListTask.response = this;
             getRestaurantListTask.execute();
         }
         else if(message.equalsIgnoreCase("map")){
+            getSupportActionBar().setTitle("Final meeting point for group: "+groupId);
             mMap.setVisibility(View.VISIBLE);
             MapFragment mapFragment = (MapFragment) getFragmentManager()
                     .findFragmentById(R.id.map);
@@ -175,5 +192,31 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
     @Override
     public void getDestinationDetails(String s) {
         Log.d("getDestinationDetails",s);
+        try{
+            JSONObject jsonObject = new JSONObject(s.toString());
+            mRestaurantName.setText(jsonObject.getString("name"));
+            mRestaurantRating.setText(String.valueOf(jsonObject.getDouble("rating"))+"/5");
+
+            String priceLevel = "";
+            for(int i=0;i<jsonObject.getInt("price_level");i++){
+                priceLevel += "$";
+            }
+            mRestaurantPrice.setText(priceLevel);
+
+            mRestaurantAddress.setText(jsonObject.getString("address"));
+            CalculateDistanceTask calculateDistanceTask =  new CalculateDistanceTask(mRestaurantDistance);
+            calculateDistanceTask.execute(userPreferences.getUserPrefHomeLocation(),
+                    jsonObject.getString("latitude")+","+jsonObject.getString("longitude"));
+
+            String url = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="
+                    + jsonObject.getString("image")
+                    + "&key=AIzaSyA0-lltBKfC00Q-W0n04Zy46ha6QTDqtAc";
+            DownloadImageTask downloadImageTask = new DownloadImageTask(meetingDetailsImageView);
+            downloadImageTask.execute(url);
+        }catch (JSONException e){
+            e.getMessage();
+        }
+
+
     }
 }
