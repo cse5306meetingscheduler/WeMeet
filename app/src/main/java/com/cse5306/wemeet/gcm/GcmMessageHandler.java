@@ -5,13 +5,14 @@ package com.cse5306.wemeet.gcm;
  */
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
-import android.content.Context;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 
 import com.cse5306.wemeet.R;
+import com.cse5306.wemeet.activities.UserHomeScreenActivity;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class GcmMessageHandler extends IntentService {
@@ -34,13 +35,22 @@ public class GcmMessageHandler extends IntentService {
 
     // Creates notification based on title and body received
     private void createNotification(String title, String body) {
-        Context context = getBaseContext();
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.mipmap.ic_launcher).setContentTitle(title)
-                .setContentText(body);
-        NotificationManager mNotificationManager = (NotificationManager) context
-                .getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(MESSAGE_NOTIFICATION_ID, mBuilder.build());
+
+        Intent intent = new Intent(this, UserHomeScreenActivity.class);
+        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        Notification n  = new Notification.Builder(this)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setStyle(new Notification.BigTextStyle().bigText(body))
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(pIntent)
+                .setAutoCancel(true).build();
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0, n);
     }
 
 }
