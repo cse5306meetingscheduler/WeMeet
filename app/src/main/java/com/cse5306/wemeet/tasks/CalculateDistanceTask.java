@@ -1,6 +1,7 @@
 package com.cse5306.wemeet.tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.TextView;
 
 import org.apache.http.HttpEntity;
@@ -37,7 +38,7 @@ public class CalculateDistanceTask extends AsyncTask<String,String,String> {
     protected String doInBackground(String... params) {
         StringBuilder builder = new StringBuilder();
         HttpClient client = new DefaultHttpClient();
-        String url="https://maps.googleapis.com/maps/api/distancematrix/json?origins="+params[0]+"&destinations="+params[1]+"&key=AIzaSyCrjUsBQoM6zXPdhKzpXANDZ7tisHHHO3o";
+        String url="https://maps.googleapis.com/maps/api/distancematrix/json?origins="+params[0]+"&destinations="+params[1]+"&key=AIzaSyA0-lltBKfC00Q-W0n04Zy46ha6QTDqtAc";
         HttpGet httpGet = new HttpGet(url);
         try {
             HttpResponse response = client.execute(httpGet);
@@ -53,22 +54,25 @@ public class CalculateDistanceTask extends AsyncTask<String,String,String> {
                 }
 
                 JSONObject jsonObject= new JSONObject(builder.toString());
+
                 result ="Distance: "+ jsonObject.getJSONArray("rows").getJSONObject(0).getJSONArray("elements")
-                        .getJSONObject(0).getJSONObject("distance").getString("text");
+                            .getJSONObject(0).getJSONObject("distance").getString("text");
+
                 result += "\n"+"Approx time: "+jsonObject.getJSONArray("rows").getJSONObject(0).getJSONArray("elements")
-                        .getJSONObject(0).getJSONObject("duration").getString("text");
+                            .getJSONObject(0).getJSONObject("duration").getString("text");
+
+                Log.d("sath",result);
             } else {
                 result = "Failed to download data!";
-                return result;
             }
+
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
-            e.printStackTrace();
+            e.getMessage();
         }finally {
-
         }
         return result;
     }
@@ -78,13 +82,7 @@ public class CalculateDistanceTask extends AsyncTask<String,String,String> {
         super.onPostExecute(s);
         TextView tv = distanceAndTimeTv.get();
         if(tv != null){
-            if(s != null || s.length() != 0){
-                tv.setText(s);
-            }else{
-                tv.setText("Failed to download data!");
-            }
+             tv.setText(s);
         }
-
-
     }
 }

@@ -1,7 +1,6 @@
 package com.cse5306.wemeet.tasks;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.cse5306.wemeet.objects.Restaurant;
 
@@ -61,8 +60,6 @@ public class GetRestaurantListTask extends AsyncTask<String,String,List<Restaura
                 restaurant.setImage(jsonArray.getJSONObject(i).getString("image"));
                 restaurant.setLatitude(jsonArray.getJSONObject(i).getDouble("latitude"));
                 restaurant.setLongitude(jsonArray.getJSONObject(i).getDouble("longitude"));
-
-                Log.d("rest",jsonArray.getJSONObject(i).getString("image"));
 
                 restaurantList.add(restaurant);
             }

@@ -12,16 +12,16 @@
         android:id="@+id/user_home_screen_toolbar"
         layout="@layout/actionbar" />
 
-    <ProgressBar
-    android:id="@+id/user_home_screen_progress"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"/>
-
 <FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+
+    <ProgressBar
+        android:id="@+id/user_home_screen_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"/>
 
     <android.support.v4.view.ViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
