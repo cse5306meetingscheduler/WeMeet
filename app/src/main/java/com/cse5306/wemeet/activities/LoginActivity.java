@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +44,7 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
     private EditText mUserNameView;
     private EditText mPasswordView;
     private View mLoginProgressView;
+    ImageView logo;
     Button mSignInButton;
     ViewGroup mLoginForm;
     UserPreferences userPreferences;
@@ -59,6 +61,8 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
         userPreferences = new UserPreferences(getApplicationContext());
 
         mLoginForm = (ViewGroup) findViewById(R.id.login_form);
+        logo = (ImageView) findViewById(R.id.logo);
+        logo.animate().alpha(1).setDuration(2000);
         mLoginScreenErrorTv = (TextView) findViewById(R.id.login_screen_error_tv);
         mLoginScreenErrorLinLayout = (LinearLayout) findViewById(R.id.login_error_lin_layout);
         mKeepLoginCb = (CheckBox) findViewById(R.id.reg_check_box);
