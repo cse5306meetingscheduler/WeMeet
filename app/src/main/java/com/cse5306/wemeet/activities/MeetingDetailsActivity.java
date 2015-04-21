@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cse5306.wemeet.R;
 import com.cse5306.wemeet.adapters.RestaurantListRvAdapter;
@@ -174,7 +175,7 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
         restaurantListRvAdapter.setOnItemClickListener(new RestaurantListRvAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
-                sendRestaurant(restaurantList.get(position+1),groupId);
+                sendRestaurant(restaurantList.get(position),groupId);
             }
         });
     }
@@ -182,7 +183,18 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
     @Override
     public void processFinish(String res) {
         // choosing restautant
-        Log.d("choose rest res",res);
+        Log.d("sa",res);
+        try{
+            JSONObject jsonObject = new JSONObject(res);
+            if(jsonObject.getInt("success") == 1){
+                Toast.makeText(getApplicationContext(),jsonObject.getString("message"),Toast.LENGTH_LONG).show();
+                finish();
+            }else if(jsonObject.getInt("success") == 0){
+                Toast.makeText(getApplicationContext(),jsonObject.getString("message"),Toast.LENGTH_LONG).show();
+            }
+        }catch(Exception e){
+            e.getMessage();
+        }
     }
 
     @Override

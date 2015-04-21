@@ -1,6 +1,7 @@
 package com.cse5306.wemeet.tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -39,6 +40,7 @@ public class ChooseRestaurantTask extends AsyncTask<String,String,String> {
         try {
             // Add your data
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+            Log.d("sel", String.valueOf(restaurantId)+"--"+username+"--"+groupId);
             nameValuePairs.add(new BasicNameValuePair("loc_id", String.valueOf(restaurantId)));
             nameValuePairs.add(new BasicNameValuePair("username", username));
             nameValuePairs.add(new BasicNameValuePair("group_id", groupId));
@@ -47,9 +49,7 @@ public class ChooseRestaurantTask extends AsyncTask<String,String,String> {
 
             return EntityUtils.toString(response.getEntity());
         } catch (ClientProtocolException e) {
-            // TODO Auto-generated catch block
         } catch (IOException e) {
-            // TODO Auto-generated catch block
         }
 
         return "error";
