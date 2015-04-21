@@ -5,7 +5,7 @@
     <string name="logout_str">Logout</string>
 
     <!-- Login Activiy -->
-    <string name="title_activity_Login">WeMeet - Login</string>
+    <string name="title_activity_Login">WeMeet</string>
     <string name="register_text">Register</string>
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
