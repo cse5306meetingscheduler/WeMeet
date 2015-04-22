@@ -39,7 +39,7 @@ public class JoinMeetingTask extends AsyncTask<String, String, String>  {
     protected String doInBackground(String... params) {
 
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("https://wemeet-sathvik1709.c9.io/participant_join.php");
+        HttpPost httppost = new HttpPost("http://omega.uta.edu/~sxa6933/WeMeet/participant_join.php");
         HttpResponse response = null;
         try {
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);

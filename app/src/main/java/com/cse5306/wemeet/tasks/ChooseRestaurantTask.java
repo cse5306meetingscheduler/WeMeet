@@ -35,7 +35,7 @@ public class ChooseRestaurantTask extends AsyncTask<String,String,String> {
     @Override
     protected String doInBackground(String... params) {
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("https://wemeet-sathvik1709.c9.io/final_destination.php");
+        HttpPost httppost = new HttpPost("http://omega.uta.edu/~sxa6933/WeMeet/final_destination.php");
         HttpResponse response = null;
         try {
             // Add your data

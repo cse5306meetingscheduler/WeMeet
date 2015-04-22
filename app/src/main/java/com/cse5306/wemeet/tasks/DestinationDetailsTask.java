@@ -33,7 +33,7 @@ public class DestinationDetailsTask extends AsyncTask<String,String,String> {
     @Override
     protected String doInBackground(String... params) {
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("https://wemeet-sathvik1709.c9.io/destination_details.php");
+        HttpPost httppost = new HttpPost("http://omega.uta.edu/~sxa6933/WeMeet/destination_details.php");
         HttpResponse response = null;
         try {
             // Add your data

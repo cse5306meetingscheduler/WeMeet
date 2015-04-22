@@ -1,6 +1,7 @@
 package com.cse5306.wemeet.tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -38,7 +39,7 @@ public class CreateMeetingTask extends AsyncTask<String,String,String> {
     @Override
     protected String doInBackground(String... params) {
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("https://wemeet-sathvik1709.c9.io/create_meeting.php");
+        HttpPost httppost = new HttpPost("http://omega.uta.edu/~sxa6933/WeMeet/create_meeting.php");
         HttpResponse response = null;
         try {
             // Add your data
@@ -65,6 +66,7 @@ public class CreateMeetingTask extends AsyncTask<String,String,String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        Log.d("sa",s);
         response.processFinish(s);
     }
 }

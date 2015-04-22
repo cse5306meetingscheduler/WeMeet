@@ -50,33 +50,36 @@ public class JoinedMeetingFragment extends Fragment {
             }
         }
 
-        //Toast.makeText(getActivity(), "your"+String.valueOf(meetingsYouJoined.size()), Toast.LENGTH_SHORT).show();
+        if(meetingsYouJoined.size() == 0){
+            mJoinMeetingsNoMeetings.setVisibility(View.VISIBLE);
+        }else{
+            MeetingListAdapter adapter = new MeetingListAdapter(meetingsYouJoined,getActivity());
+            yourMeetingsListView.setAdapter(adapter);
 
-        MeetingListAdapter adapter = new MeetingListAdapter(meetingsYouJoined,getActivity());
-        yourMeetingsListView.setAdapter(adapter);
+            yourMeetingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        yourMeetingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if(meetingsYouJoined.get(position).getMidpoint().equalsIgnoreCase("null")){
+                        Toast.makeText(getActivity(), "Other group members have not yet joined", Toast.LENGTH_LONG).show();
+                    }else if(!meetingsYouJoined.get(position).getMidpoint().equalsIgnoreCase("null") &&
+                            meetingsYouJoined.get(position).getFinalDestination().equalsIgnoreCase("null")) {
+                        Intent meetingDetails = new Intent(getActivity(), MeetingDetailsActivity.class);
+                        meetingDetails.putExtra("fragmentInflateType","suggest_list");
+                        meetingDetails.putExtra("groupId",String.valueOf(meetingsYouJoined.get(position).getGroupId()));
+                        startActivity(meetingDetails);
+                    }else if(!meetingsYouJoined.get(position).getMidpoint().equalsIgnoreCase("null") &&
+                            !meetingsYouJoined.get(position).getFinalDestination().equalsIgnoreCase("null")){
+                        Intent meetingDetails = new Intent(getActivity(), MeetingDetailsActivity.class);
+                        meetingDetails.putExtra("fragmentInflateType","map");
+                        meetingDetails.putExtra("groupId",String.valueOf(meetingsYouJoined.get(position).getGroupId()));
+                        startActivity(meetingDetails);
+                    }
 
-                if(meetingsYouJoined.get(position).getMidpoint().equalsIgnoreCase("null")){
-                    Toast.makeText(getActivity(), "Other group members have not yet joined", Toast.LENGTH_LONG).show();
-                }else if(!meetingsYouJoined.get(position).getMidpoint().equalsIgnoreCase("null") &&
-                        meetingsYouJoined.get(position).getFinalDestination().equalsIgnoreCase("null")) {
-                    Intent meetingDetails = new Intent(getActivity(), MeetingDetailsActivity.class);
-                    meetingDetails.putExtra("fragmentInflateType","suggest_list");
-                    meetingDetails.putExtra("groupId",String.valueOf(meetingsYouJoined.get(position).getGroupId()));
-                    startActivity(meetingDetails);
-                }else if(!meetingsYouJoined.get(position).getMidpoint().equalsIgnoreCase("null") &&
-                        !meetingsYouJoined.get(position).getFinalDestination().equalsIgnoreCase("null")){
-                    Intent meetingDetails = new Intent(getActivity(), MeetingDetailsActivity.class);
-                    meetingDetails.putExtra("fragmentInflateType","map");
-                    meetingDetails.putExtra("groupId",String.valueOf(meetingsYouJoined.get(position).getGroupId()));
-                    startActivity(meetingDetails);
                 }
+            });
+        }
 
-            }
-        });
 
         return rootView;
     }

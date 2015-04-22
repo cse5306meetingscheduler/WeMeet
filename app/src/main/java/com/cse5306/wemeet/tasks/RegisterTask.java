@@ -38,7 +38,7 @@ public class RegisterTask extends AsyncTask<String,String,String> {
     protected String doInBackground(String... params) {
 
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("https://wemeet-sathvik1709.c9.io/register.php");
+        HttpPost httppost = new HttpPost("http://omega.uta.edu/~sxa6933/WeMeet/register.php");
         HttpResponse response = null;
         try {
             // Add your data

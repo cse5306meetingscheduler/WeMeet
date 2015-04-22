@@ -10,8 +10,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.cse5306.wemeet.R;
+import com.cse5306.wemeet.activities.MeetingDetailsActivity;
 import com.cse5306.wemeet.activities.UserHomeScreenActivity;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -27,16 +29,30 @@ public class GcmMessageHandler extends IntentService {
         Bundle extras = intent.getExtras();
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
         String messageType = gcm.getMessageType(intent);
+
+        Intent intentActStart = null;
+
+        String type = extras.getString("type");
+
+        Log.d("type",String.valueOf(extras.getInt("type")));
+        if(type.equalsIgnoreCase("1")){
+            intentActStart = new Intent(this, UserHomeScreenActivity.class);
+        }else if(type.equalsIgnoreCase("2")){
+            intentActStart = new Intent(this, MeetingDetailsActivity.class);
+            intentActStart.putExtra("fragmentInflateType","map");
+            intentActStart.putExtra("groupId",extras.getString("group_id"));
+        }
+
         String title = extras.getString("title");
         String body = extras.getString("body");
-        createNotification(title, body);
+
+        createNotification(title, body, intentActStart);
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
     // Creates notification based on title and body received
-    private void createNotification(String title, String body) {
+    private void createNotification(String title, String body,Intent intent) {
 
-        Intent intent = new Intent(this, UserHomeScreenActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
         Notification n  = new Notification.Builder(this)

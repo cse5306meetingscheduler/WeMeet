@@ -32,7 +32,7 @@ public class DeleteGroupTask extends AsyncTask<String,String,String> {
     @Override
     protected String doInBackground(String... params) {
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("https://wemeet-sathvik1709.c9.io/delete_group.php");
+        HttpPost httppost = new HttpPost("http://omega.uta.edu/~sxa6933/WeMeet/delete_group.php");
         HttpResponse response = null;
         try {
             // Add your data

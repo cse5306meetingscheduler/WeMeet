@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
+import java.text.DecimalFormat;
 
 /**
  * Created by Sathvik on 19/04/15.
@@ -55,10 +56,14 @@ public class CalculateDistanceTask extends AsyncTask<String,String,String> {
 
                 JSONObject jsonObject= new JSONObject(builder.toString());
 
-                result = "From your home location: \n";
-                result +="Distance: "+ jsonObject.getJSONArray("rows").getJSONObject(0).getJSONArray("elements")
-                            .getJSONObject(0).getJSONObject("distance").getString("text");
+                double distance = jsonObject.getJSONArray("rows").getJSONObject(0).getJSONArray("elements")
+                        .getJSONObject(0).getJSONObject("distance").getDouble("value");
+                double distanceInMiles = distance / 1609.344;
 
+                DecimalFormat formatter = new DecimalFormat("#0.00");
+
+                result = "From your home location: \n";
+                result +="Distance: "+ String.valueOf(formatter.format(distanceInMiles))+" mi";
                 result += "\n"+"Approx time: "+jsonObject.getJSONArray("rows").getJSONObject(0).getJSONArray("elements")
                             .getJSONObject(0).getJSONObject("duration").getString("text");
 

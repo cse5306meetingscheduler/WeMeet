@@ -82,31 +82,37 @@ public class HostMeetingFragment extends Fragment implements DeleteGroupTaskResp
             }
         }
 
-        adapter = new MeetingListAdapter(meetingsYouHost,getActivity());
-        hostMeetingListView.setAdapter(adapter);
+        if(meetingsYouHost.size() == 0){
+            mHostMeetingsNoMeetings.setVisibility(View.VISIBLE);
+        }else{
+            adapter = new MeetingListAdapter(meetingsYouHost,getActivity());
+            hostMeetingListView.setAdapter(adapter);
 
-        hostMeetingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            hostMeetingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                if(meetingsYouHost.get(position).getMidpoint().equalsIgnoreCase("null")){
-                    Toast.makeText(getActivity(),"Other group members have not yet joined",Toast.LENGTH_LONG).show();
-                }else if(!meetingsYouHost.get(position).getMidpoint().equalsIgnoreCase("null") &&
-                        meetingsYouHost.get(position).getFinalDestination().equalsIgnoreCase("null")) {
-                    Intent meetingDetails = new Intent(getActivity(), MeetingDetailsActivity.class);
-                    meetingDetails.putExtra("fragmentInflateType","suggest_list");
-                    meetingDetails.putExtra("groupId",String.valueOf(meetingsYouHost.get(position).getGroupId()));
-                    startActivity(meetingDetails);
-                }else if(!meetingsYouHost.get(position).getMidpoint().equalsIgnoreCase("null") &&
-                        !meetingsYouHost.get(position).getFinalDestination().equalsIgnoreCase("null")){
-                    Intent meetingDetails = new Intent(getActivity(), MeetingDetailsActivity.class);
-                    meetingDetails.putExtra("fragmentInflateType","map");
-                    meetingDetails.putExtra("groupId",String.valueOf(meetingsYouHost.get(position).getGroupId()));
-                    startActivity(meetingDetails);
+                    if(meetingsYouHost.get(position).getMidpoint().equalsIgnoreCase("null")){
+                        Toast.makeText(getActivity(),"Other group members have not yet joined",Toast.LENGTH_LONG).show();
+                    }else if(!meetingsYouHost.get(position).getMidpoint().equalsIgnoreCase("null") &&
+                            meetingsYouHost.get(position).getFinalDestination().equalsIgnoreCase("null")) {
+                        Intent meetingDetails = new Intent(getActivity(), MeetingDetailsActivity.class);
+                        meetingDetails.putExtra("fragmentInflateType","suggest_list");
+                        meetingDetails.putExtra("groupId",String.valueOf(meetingsYouHost.get(position).getGroupId()));
+                        startActivity(meetingDetails);
+                    }else if(!meetingsYouHost.get(position).getMidpoint().equalsIgnoreCase("null") &&
+                            !meetingsYouHost.get(position).getFinalDestination().equalsIgnoreCase("null")){
+                        Intent meetingDetails = new Intent(getActivity(), MeetingDetailsActivity.class);
+                        meetingDetails.putExtra("fragmentInflateType","map");
+                        meetingDetails.putExtra("groupId",String.valueOf(meetingsYouHost.get(position).getGroupId()));
+                        startActivity(meetingDetails);
+                    }
+
                 }
+            });
+        }
 
-            }
-        });
+
         return rootView;
     }
 
@@ -119,6 +125,9 @@ public class HostMeetingFragment extends Fragment implements DeleteGroupTaskResp
                 Toast.makeText(getActivity(),jsonObject.getString("message"),Toast.LENGTH_LONG).show();
            }else if(jsonObject.getInt("success") == 1){
                meetingsYouHost.remove(tempMeetingDetailsObj);
+               if(meetingsYouHost.size() == 0){
+                   mHostMeetingsNoMeetings.setVisibility(View.VISIBLE);
+               }
                adapter.notifyDataSetChanged();
                Toast.makeText(getActivity(),jsonObject.getString("message"),Toast.LENGTH_LONG).show();
            }

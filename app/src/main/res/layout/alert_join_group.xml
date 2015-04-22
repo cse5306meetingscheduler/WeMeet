@@ -8,6 +8,7 @@
     <EditText
         android:id="@+id/join_grp_id"
         android:layout_marginLeft="25dp"
+        android:inputType="number"
         android:layout_marginRight="25dp"
         style="?android:textAppearanceMedium"
         android:layout_width="match_parent"

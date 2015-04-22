@@ -38,7 +38,7 @@ public class MeetingListTask extends AsyncTask<String, String,List<MeetingDetail
         List<MeetingDetails> meetingDetailsList = new ArrayList<MeetingDetails>();
 
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("https://wemeet-sathvik1709.c9.io/view_meetings.php");
+        HttpPost httppost = new HttpPost("http://omega.uta.edu/~sxa6933/WeMeet/view_meetings.php");
         HttpResponse response = null;
         try {
             // Add your data

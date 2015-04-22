@@ -38,7 +38,7 @@ public class GetRestaurantListTask extends AsyncTask<String,String,List<Restaura
         restaurantList = new ArrayList<Restaurant>();
 
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("https://wemeet-sathvik1709.c9.io/find_places.php");
+        HttpPost httppost = new HttpPost("http://omega.uta.edu/~sxa6933/WeMeet/find_places.php");
         HttpResponse response = null;
         try {
             // Add your data
