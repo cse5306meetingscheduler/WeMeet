@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -19,6 +20,11 @@ import com.cse5306.wemeet.activities.MeetingDetailsActivity;
 import com.cse5306.wemeet.activities.UserHomeScreenActivity;
 import com.cse5306.wemeet.adapters.MeetingListAdapter;
 import com.cse5306.wemeet.objects.MeetingDetails;
+import com.cse5306.wemeet.tasks.DeleteGroupTask;
+import com.cse5306.wemeet.tasks.DeleteGroupTaskResponse;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +32,13 @@ import java.util.List;
 /**
  * Created by Sathvik on 12/04/15.
  */
-public class HostMeetingFragment extends Fragment {
+public class HostMeetingFragment extends Fragment implements DeleteGroupTaskResponse {
 
     List<MeetingDetails> meetingDetailsList,meetingsYouHost;
     LinearLayout mHostMeetingsProgress, mHostMeetingsNoMeetings;
     ListView hostMeetingListView;
+    MeetingListAdapter adapter;
+    MeetingDetails tempMeetingDetailsObj;
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -42,8 +50,13 @@ public class HostMeetingFragment extends Fragment {
     public boolean onContextItemSelected(MenuItem item) {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        if(item.getItemId() == R.id.delete_action)
-            Toast.makeText(getActivity(),meetingsYouHost.get(info.position).getMeetingDate(),Toast.LENGTH_LONG).show();
+        if(item.getItemId() == R.id.delete_action){
+            tempMeetingDetailsObj = meetingsYouHost.get(info.position);
+            DeleteGroupTask deleteGroupTask = new DeleteGroupTask(String.valueOf(meetingsYouHost.get(info.position).getGroupId()));
+            deleteGroupTask.response = this;
+            deleteGroupTask.execute();
+        }
+
         return true;
     }
 
@@ -69,7 +82,7 @@ public class HostMeetingFragment extends Fragment {
             }
         }
 
-        MeetingListAdapter adapter = new MeetingListAdapter(meetingsYouHost,getActivity());
+        adapter = new MeetingListAdapter(meetingsYouHost,getActivity());
         hostMeetingListView.setAdapter(adapter);
 
         hostMeetingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -94,16 +107,23 @@ public class HostMeetingFragment extends Fragment {
 
             }
         });
-
-
-
-        /*hostMeetingListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                return true;
-            }
-        });*/
-
         return rootView;
+    }
+
+    @Override
+    public void processFinish(String output) {
+        try{
+           JSONObject jsonObject = new JSONObject(output.toString());
+            Log.d("res", output);
+           if(jsonObject.getInt("success") == 0){
+                Toast.makeText(getActivity(),jsonObject.getString("message"),Toast.LENGTH_LONG).show();
+           }else if(jsonObject.getInt("success") == 1){
+               meetingsYouHost.remove(tempMeetingDetailsObj);
+               adapter.notifyDataSetChanged();
+               Toast.makeText(getActivity(),jsonObject.getString("message"),Toast.LENGTH_LONG).show();
+           }
+        }catch(JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
