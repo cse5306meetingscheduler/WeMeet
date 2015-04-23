@@ -19,7 +19,8 @@
 
     <!-- Register Activity -->
     <string name="title_activity_register">Register</string>
-    <string name="reg_username_hint_text">Username</string>
+    <string name="reg_username_hint_text">Username (min 6 characters)</string>
+    <string name="reg_password_hint_text">Password (min 6 characters)</string>
     <string name="reg_phone_number_hint">234 432 5648</string>
     <string name="reg_email_hint">john@gmail.com</string>
     <string name="title_activity_user_home_screen">Your Meetings</string>

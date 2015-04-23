@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -54,9 +55,11 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
     private RecyclerView.LayoutManager mLayoutManager;
     private RestaurantListRvAdapter restaurantListRvAdapter;
     List<Restaurant> restaurantList;
+    Button mStartNavigationButton;
     Toolbar meeting_details_toolbar;
     String groupId;
     GoogleMap map;
+    String destinationLatLngForNavigation = null;
     ImageView meetingDetailsImageView;
     TextView mRestaurantName,mRestaurantRating,mRestaurantPrice,mRestaurantAddress,mRestaurantDistance;
 
@@ -69,6 +72,7 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
 
         userPreferences = new UserPreferences(this);
         mMap = (LinearLayout) findViewById(R.id.meeting_details_map_fragment);
+        mStartNavigationButton = (Button) findViewById(R.id.start_navigation);
         mSelectRestaurant = (LinearLayout) findViewById(R.id.select_restaurant_list_layout);
         meetingDetailsImageView = (ImageView) findViewById(R.id.meeting_details_rest_image);
         mRestaurantName = (TextView) findViewById(R.id.meeting_details_restaurant_name);
@@ -106,6 +110,13 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
             mapFragment.getMapAsync(this);
             fetchDestinationDetails();
         }
+
+        mStartNavigationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startNavigation();
+            }
+        });
     }
 
     private void fetchDestinationDetails(){
@@ -131,17 +142,18 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
         LatLng latLng = new LatLng(Double.parseDouble(userPreferences.getUserPrefHomeLocation().split(",")[0]),
                 Double.parseDouble(userPreferences.getUserPrefHomeLocation().split(",")[1]));
 
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+        /*googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
         googleMap.addMarker(new MarkerOptions()
                 .position(latLng)
-                .title("Marker"));
+                .title("Marker"));*/
+
 
 
     }
 
     private void startNavigation(){
         Intent mapIntent = new Intent(android.content.Intent.ACTION_VIEW,
-                Uri.parse("google.navigation:q=" + userPreferences.getUserPrefHomeLocation().split(",")[0] + "," + userPreferences.getUserPrefHomeLocation().split(",")[1]));
+                Uri.parse("google.navigation:q=" + destinationLatLngForNavigation));
         mapIntent.setPackage("com.google.android.apps.maps");
         startActivity(mapIntent);
     }
@@ -221,7 +233,8 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
                     + "&key=AIzaSyA0-lltBKfC00Q-W0n04Zy46ha6QTDqtAc";
             DownloadImageTask downloadImageTask = new DownloadImageTask(meetingDetailsImageView);
             downloadImageTask.execute(url);
-            buildMap(jsonObject.getString("latitude"),jsonObject.getString("longitude"));
+            destinationLatLngForNavigation = jsonObject.getString("latitude")+","+jsonObject.getString("longitude");
+            buildMap(jsonObject.getString("latitude"),jsonObject.getString("longitude"),jsonObject.getString("name"));
 
 
         }catch (JSONException e){
@@ -231,7 +244,7 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
 
     }
 
-    private void buildMap(String destLatStr, String destLngStr){
+    private void buildMap(String destLatStr, String destLngStr,String destName){
 
         double srcLat = Double.parseDouble(userPreferences.getUserPrefHomeLocation().split(",")[0]);
         double srcLng = Double.parseDouble(userPreferences.getUserPrefHomeLocation().split(",")[1]);
@@ -240,7 +253,12 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
 
 
         Marker srcMarker = map.addMarker(new MarkerOptions().position(new LatLng(srcLat,srcLng)));
+        srcMarker.setTitle("Home");
+        srcMarker.showInfoWindow();
         Marker destMarker = map.addMarker(new MarkerOptions().position(new LatLng(destLat,destLng)));
+        destMarker.setTitle(destName);
+        destMarker.showInfoWindow();
+
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {

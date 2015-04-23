@@ -137,11 +137,11 @@ public class RegisterActivity extends ActionBarActivity implements RegisterTaskR
         mRegPhoneNum.setError(null);
         showError(false,"");
 
-        if(mRegUsername.getText().toString().length() <= 6){
+        if(mRegUsername.getText().toString().length() < 6){
             mRegUsername.setError("Invalid Username");
             mRegUsername.requestFocus();
             return false;
-        }else if(mRegPassword.getText().toString().length() <=6){
+        }else if(mRegPassword.getText().toString().length() < 6){
             mRegPassword.setError("Invalid Password");
             mRegPassword.requestFocus();
             return false;

@@ -54,7 +54,9 @@ public class MeetingListAdapter extends BaseAdapter {
         TextView meetingPoint = (TextView) convertView.findViewById(R.id.meet_list_item_meeting_point);
         TextView meetingPlace = (TextView) convertView.findViewById(R.id.meet_list_item_meeting_place);
 
+
         meetingGroupId.setmText(String.valueOf(meetingDetailsList.get(position).getGroupId()));
+        meetingGroupId.setmColor(getBgColor(meetingDetailsList.get(position).getGroupId()));
         meetingDate.setText(meetingDetailsList.get(position).getMeetingDate());
         meetingTime.setText(meetingDetailsList.get(position).getMeetingTime());
 
@@ -67,5 +69,23 @@ public class MeetingListAdapter extends BaseAdapter {
         meetingPlace.setText(meetingDetailsList.get(position).getFinalDestination());
 
         return convertView;
+    }
+
+    private  int getBgColor(int mod){
+        mod = mod % 5;
+        switch (mod){
+            case 0:
+                return context.getResources().getColor(R.color.mod1);
+            case 1:
+                return context.getResources().getColor(R.color.mod2);
+            case 2:
+                return context.getResources().getColor(R.color.mod3);
+            case 3:
+                return context.getResources().getColor(R.color.mod4);
+            case 4:
+                return context.getResources().getColor(R.color.mod5);
+            default:
+                return context.getResources().getColor(R.color.mod4);
+        }
     }
 }
