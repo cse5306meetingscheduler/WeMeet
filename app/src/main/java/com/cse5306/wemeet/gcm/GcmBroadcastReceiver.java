@@ -21,4 +21,6 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
         // Return successful
         setResultCode(Activity.RESULT_OK);
     }
+
+
 }

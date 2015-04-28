@@ -34,13 +34,14 @@ public class GcmMessageHandler extends IntentService {
 
         String type = extras.getString("type");
 
-        Log.d("type",String.valueOf(extras.getInt("type")));
+
         if(type.equalsIgnoreCase("1")){
             intentActStart = new Intent(this, UserHomeScreenActivity.class);
         }else if(type.equalsIgnoreCase("2")){
             intentActStart = new Intent(this, MeetingDetailsActivity.class);
             intentActStart.putExtra("fragmentInflateType","map");
             intentActStart.putExtra("groupId",extras.getString("group_id"));
+            //Log.d("rec gid", String.valueOf(extras.getString("group_id")));
         }
 
         String title = extras.getString("title");
@@ -50,10 +51,16 @@ public class GcmMessageHandler extends IntentService {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("IntentService","intent");
+    }
+
     // Creates notification based on title and body received
     private void createNotification(String title, String body,Intent intent) {
 
-        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification n  = new Notification.Builder(this)
                 .setContentTitle(title)

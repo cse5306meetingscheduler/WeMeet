@@ -133,7 +133,7 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
             focusView = mPasswordView;
             cancel = true;
         }else if(!isPasswordValid(password)){
-            mPasswordView.setError(getString(R.string.error_invalid_email));
+            mPasswordView.setError(getString(R.string.error_incorrect_password));
             focusView = mPasswordView;
             cancel = true;
         }

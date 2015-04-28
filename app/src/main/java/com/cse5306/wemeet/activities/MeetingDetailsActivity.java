@@ -53,11 +53,14 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
     LinearLayout mSelectRestaurant,mMap;
     RecyclerView selectRestaurantRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
+    DestinationDetailsTask destinationDetailsTask;
     private RestaurantListRvAdapter restaurantListRvAdapter;
     List<Restaurant> restaurantList;
+    ChooseRestaurantTask chooseRestaurantTask;
     Button mStartNavigationButton;
     Toolbar meeting_details_toolbar;
     String groupId;
+    Intent intent;
     GoogleMap map;
     String destinationLatLngForNavigation = null;
     ImageView meetingDetailsImageView;
@@ -87,10 +90,11 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
         meeting_details_toolbar = (Toolbar) findViewById(R.id.meeting_details_toolbar);
         restaurantList = new ArrayList<Restaurant>();
 
-        Intent intent = getIntent();
+        intent = getIntent();
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         String message = intent.getStringExtra("fragmentInflateType");
         groupId = intent.getStringExtra("groupId");
-        Log.d("asd", groupId);
+        Log.d("asdd", groupId);
 
         setSupportActionBar(meeting_details_toolbar);
 
@@ -108,7 +112,7 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
             MapFragment mapFragment = (MapFragment) getFragmentManager()
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
-            fetchDestinationDetails();
+            fetchDestinationDetails(groupId);
         }
 
         mStartNavigationButton.setOnClickListener(new View.OnClickListener() {
@@ -119,15 +123,15 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
         });
     }
 
-    private void fetchDestinationDetails(){
-        DestinationDetailsTask destinationDetailsTask = new DestinationDetailsTask(groupId,userPreferences.getSessionUserPrefUsername());
+    private void fetchDestinationDetails(String gId){
+        destinationDetailsTask = new DestinationDetailsTask(gId,userPreferences.getSessionUserPrefUsername());
         destinationDetailsTask.response = this;
         destinationDetailsTask.execute();
 
     }
 
     private void sendRestaurant(Restaurant restaurant,String group_id){
-        ChooseRestaurantTask chooseRestaurantTask = new ChooseRestaurantTask(userPreferences.getSessionUserPrefUsername(),
+        chooseRestaurantTask = new ChooseRestaurantTask(userPreferences.getSessionUserPrefUsername(),
                                                 group_id,
                                                 restaurant.getLocId());
         chooseRestaurantTask.response = this;
@@ -211,6 +215,8 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
 
     @Override
     public void getDestinationDetails(String s) {
+        destinationDetailsTask = null;
+        intent = null;
         Log.d("getDestinationDetails",s);
         try{
             JSONObject jsonObject = new JSONObject(s.toString());

@@ -57,16 +57,24 @@ public class MeetingListAdapter extends BaseAdapter {
 
         meetingGroupId.setmText(String.valueOf(meetingDetailsList.get(position).getGroupId()));
         meetingGroupId.setmColor(getBgColor(meetingDetailsList.get(position).getGroupId()));
+
         meetingDate.setText(meetingDetailsList.get(position).getMeetingDate());
         meetingTime.setText(meetingDetailsList.get(position).getMeetingTime());
 
         if(meetingDetailsList.get(position).getMidpoint().equalsIgnoreCase("null")){
-            meetingPoint.setText("Waiting for users to join");
-        }else{
-            meetingPoint.setText("Click to choose your choice location");
+            meetingPoint.setText("Status: Waiting for users to join");
+            meetingPlace.setVisibility(View.GONE);
+        }else if(!meetingDetailsList.get(position).getMidpoint().equalsIgnoreCase("null") &&
+                meetingDetailsList.get(position).getFinalDestination().equalsIgnoreCase("null")){
+            meetingPoint.setText("Status: Click to choose your choice location");
+            meetingPlace.setVisibility(View.GONE);
+        }else if(!meetingDetailsList.get(position).getFinalDestination().equalsIgnoreCase("null")){
+            meetingPoint.setVisibility(View.GONE);
+            meetingPlace.setVisibility(View.VISIBLE);
+            meetingPlace.setText("Click to see final meeting point");
         }
 
-        meetingPlace.setText(meetingDetailsList.get(position).getFinalDestination());
+
 
         return convertView;
     }
