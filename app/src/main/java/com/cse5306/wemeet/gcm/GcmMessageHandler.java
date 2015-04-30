@@ -8,8 +8,12 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.util.Log;
 
 import com.cse5306.wemeet.R;
@@ -17,8 +21,13 @@ import com.cse5306.wemeet.activities.MeetingDetailsActivity;
 import com.cse5306.wemeet.activities.UserHomeScreenActivity;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class GcmMessageHandler extends IntentService {
+
     public static final int MESSAGE_NOTIFICATION_ID = 435345;
+    SimpleDateFormat parserSDF;
 
     public GcmMessageHandler() {
         super("GcmMessageHandler");
@@ -41,7 +50,9 @@ public class GcmMessageHandler extends IntentService {
             intentActStart = new Intent(this, MeetingDetailsActivity.class);
             intentActStart.putExtra("fragmentInflateType","map");
             intentActStart.putExtra("groupId",extras.getString("group_id"));
-            //Log.d("rec gid", String.valueOf(extras.getString("group_id")));
+            String recDate = extras.getString("meeting_date") +" "+extras.getString("meeting_time");
+            addToCalender(recDate,extras.getString("group_id"));
+            Log.d("rec gid", String.valueOf(recDate));
         }
 
         String title = extras.getString("title");
@@ -74,6 +85,32 @@ public class GcmMessageHandler extends IntentService {
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         notificationManager.notify(0, n);
+    }
+
+    public void addToCalender(String recDate,String groupId){
+        parserSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date d=null;
+        try{
+            d = parserSDF.parse(recDate);
+        }catch(Exception e){
+            e.getStackTrace();
+            return;
+        }
+
+        long calID = 3;
+        long startMillis = d.getTime();
+        long endMillis = startMillis+60*60*1000;
+
+
+        ContentResolver cr = getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(CalendarContract.Events.DTSTART, startMillis);
+        values.put(CalendarContract.Events.DTEND, endMillis);
+        values.put(CalendarContract.Events.TITLE, "Meeting with groupId "+groupId);
+        values.put(CalendarContract.Events.DESCRIPTION, "Meeting");
+        values.put(CalendarContract.Events.CALENDAR_ID, calID);
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, "America/Los_Angeles");
+        Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
     }
 
 }

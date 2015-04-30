@@ -20,7 +20,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cse5306.wemeet.R;
 import com.cse5306.wemeet.preferences.UserPreferences;
@@ -32,14 +31,13 @@ import org.json.JSONObject;
 
 
 /**
- * A login screen that offers login via email/password.
+ * Activity that handles user login
  */
 public class LoginActivity extends Activity implements UserLoginTaskResponse {
 
 
     private UserLoginTask mAuthTask = null;
-
-    // UI references.
+    TextView mLogoText;
     private CheckBox mKeepLoginCb;
     private EditText mUserNameView;
     private EditText mPasswordView;
@@ -60,6 +58,7 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
         hideKeyboard();
         userPreferences = new UserPreferences(getApplicationContext());
 
+        mLogoText = (TextView) findViewById(R.id.logo_text);
         mLoginForm = (ViewGroup) findViewById(R.id.login_form);
         logo = (ImageView) findViewById(R.id.logo);
         logo.animate().alpha(1).setDuration(2000);
@@ -71,17 +70,18 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
 
         mUserNameView = (EditText) findViewById(R.id.username);
         mPasswordView = (EditText) findViewById(R.id.password);
+
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if(actionId == R.id.ime_login || actionId == EditorInfo.IME_NULL){
-                    Toast.makeText(getApplicationContext(), "Test Login", Toast.LENGTH_LONG).show();
                     return  true;
                 }
                 return false;
             }
         });
 
+        // if "keep me login" is checked
         if(userPreferences.getUserPrefKeepLogin()){
             mKeepLoginCb.setChecked(true);
             userPreferences.setSessionUserPrefUsername(userPreferences.getUserPrefUsername());
@@ -97,7 +97,9 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
                 attemptLogin();
             }
         });
+
         mRegisterButton = (Button) findViewById(R.id.register_button);
+        // start RegisterActivity on register button click
         mRegisterButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,6 +110,7 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
 
     }
 
+    // validate input and start the login task
     public void attemptLogin() {
         hideKeyboard();
         mLoginProgressView.setVisibility(View.VISIBLE);
@@ -173,11 +176,13 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
         return password.length() > 6;
     }
 
+    // method to show any errors
     private void showError(boolean show,String message){
         mLoginScreenErrorLinLayout.setVisibility(show ? View.VISIBLE : View.GONE);
         mLoginScreenErrorTv.setText(message);
     }
 
+    // receive the result of login task and move to userHomeScreenActivity if credentials are valid
     @Override
     public void processFinish(String output) {
         mLoginProgressView.setVisibility(View.GONE);
@@ -214,6 +219,7 @@ public class LoginActivity extends Activity implements UserLoginTaskResponse {
         );
     }
 
+    // method to check internet connection
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();

@@ -46,6 +46,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+* Activity that handles both restaurant selection task and display final meeting point
+* */
+
 public class MeetingDetailsActivity extends ActionBarActivity implements OnMapReadyCallback,
         GetRestaurantListTaskResponse,ChooseRestaurantTaskResponse,DestinationDetailsTaskResponse {
 
@@ -91,14 +95,13 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
         restaurantList = new ArrayList<Restaurant>();
 
         intent = getIntent();
-        //intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         String message = intent.getStringExtra("fragmentInflateType");
         groupId = intent.getStringExtra("groupId");
         Log.d("asdd", groupId);
 
         setSupportActionBar(meeting_details_toolbar);
 
-
+        // if intent is "suggest_list" then display the else fetch details of final point and display it
         if(message.equalsIgnoreCase("suggest_list")) {
             mSelectRestaurant.setVisibility(View.VISIBLE);
             getSupportActionBar().setTitle("Choose your choice of place for "+groupId);
@@ -118,6 +121,7 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
         mStartNavigationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // start navigation from home location to final meeting point
                 startNavigation();
             }
         });
@@ -143,16 +147,8 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-        LatLng latLng = new LatLng(Double.parseDouble(userPreferences.getUserPrefHomeLocation().split(",")[0]),
-                Double.parseDouble(userPreferences.getUserPrefHomeLocation().split(",")[1]));
-
-        /*googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
-        googleMap.addMarker(new MarkerOptions()
-                .position(latLng)
-                .title("Marker"));*/
-
-
-
+        /*LatLng latLng = new LatLng(Double.parseDouble(userPreferences.getUserPrefHomeLocation().split(",")[0]),
+                Double.parseDouble(userPreferences.getUserPrefHomeLocation().split(",")[1]));*/
     }
 
     private void startNavigation(){
@@ -179,11 +175,12 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
     public void processFinish(List<Restaurant> output) {
         // fetching list
         restaurantList = output;
-        //rec adapter
+        // display results in list
         restaurantListRvAdapter = new RestaurantListRvAdapter(restaurantList,this);
         selectRestaurantRecyclerView.setAdapter(restaurantListRvAdapter);
         selectRestaurantRecyclerView.setItemViewCacheSize(output.size());
@@ -196,6 +193,7 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
         });
     }
 
+    //posting user selected restaurant
     @Override
     public void processFinish(String res) {
         // choosing restautant
@@ -203,6 +201,7 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
         try{
             JSONObject jsonObject = new JSONObject(res);
             if(jsonObject.getInt("success") == 1){
+                // if posting user selected restaurant is successful finish current activity and go back to userHomeScreen
                 Toast.makeText(getApplicationContext(),jsonObject.getString("message"),Toast.LENGTH_LONG).show();
                 finish();
             }else if(jsonObject.getInt("success") == 0){
@@ -213,6 +212,7 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
         }
     }
 
+    // display final meeting point
     @Override
     public void getDestinationDetails(String s) {
         destinationDetailsTask = null;
@@ -250,6 +250,7 @@ public class MeetingDetailsActivity extends ActionBarActivity implements OnMapRe
 
     }
 
+    // show markers and set bounds of the map to markers
     private void buildMap(String destLatStr, String destLngStr,String destName){
 
         double srcLat = Double.parseDouble(userPreferences.getUserPrefHomeLocation().split(",")[0]);

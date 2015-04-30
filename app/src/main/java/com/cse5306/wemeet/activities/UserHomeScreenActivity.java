@@ -41,6 +41,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+* Activity that displays users list of meetings
+* */
 
 public class UserHomeScreenActivity extends ActionBarActivity implements JoinMeetingTaskResponse,MeetingListTaskResponse {
 
@@ -91,7 +94,7 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
         mFloatingActionJoinMeeting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // alert dailog
+                // alert dialog to get group id from user
                 floatingActionMenu.close(true);
                 promptUserInput();
             }
@@ -109,9 +112,11 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
     @Override
     protected void onStart() {
         super.onStart();
+        // update meeting list on start of the activity
         updateMeetingList();
     }
 
+    //Fetch meeting list
     private  void updateMeetingList(){
         mHomeScreenProgress.setVisibility(View.VISIBLE);
         mViewPager.setVisibility(View.GONE);
@@ -121,6 +126,7 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
     }
 
 
+    // prompt user to gt group id he wants to join
     private void promptUserInput() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Enter Group Id");
@@ -166,6 +172,7 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
         alert.show();
     }
 
+    // join meeting task
     private void callJoinMeetingTask() {
         if(joinGrpId != null && locationStr != null){
             JoinMeetingTask joinMeetingTask = new JoinMeetingTask(userPreferences.getSessionUserPrefUsername(),
@@ -208,6 +215,7 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
         return super.onOptionsItemSelected(item);
     }
 
+    // result of join meeting task
     @Override
     public void processFinish(String output) {
         locationStr = null;
@@ -233,6 +241,7 @@ public class UserHomeScreenActivity extends ActionBarActivity implements JoinMee
         updateMeetingList();
     }
 
+    // method to display errors
     private void showResponse(final boolean show,final String res){
         mHomeScreenLinLayout.setVisibility(show ? View.VISIBLE : View.GONE);
         mHomeScreenResTv.setText(res);

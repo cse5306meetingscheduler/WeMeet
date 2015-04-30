@@ -30,6 +30,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+/*
+* Activity that handles new user register task
+* */
 
 public class RegisterActivity extends ActionBarActivity implements RegisterTaskResponse {
 

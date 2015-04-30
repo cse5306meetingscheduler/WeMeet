@@ -12,8 +12,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -40,6 +38,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+/*
+* This activity lets user create a new meeting
+* */
 
 public class CreateMeetingActivity extends ActionBarActivity implements CreateMeetingTaskResponse{
 
@@ -92,12 +94,14 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
         mCMMaxPpl.setMinValue(2);
         mCMMaxPpl.setMaxValue(10);
 
+        // get user home location
         userPreferences = new UserPreferences(getApplicationContext());
         if(userPreferences.getUserPrefHomeLocation() != null){
             mlocationString = userPreferences.getUserPrefHomeLocation();
             mCMLocatinSelectedTv.setText(userPreferences.getUserPrefHomeLocation());
         }
 
+        // date picker on click listener
         mCMDatePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,6 +109,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
             }
         });
 
+        // time picker on click listener
         mCMTimePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,6 +117,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
             }
         });
 
+        // validate input and send request to create meeting
         mCMBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,6 +125,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
             }
         });
 
+        // listener for radio button change for home button and current location button
         mCMRadioGrp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -128,12 +135,14 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
                 }else if(checkedId == R.id.create_meet_radio_curr_loc){
                     mlocationString = null;
                     mCMLocatinSelectedTv.setText("Retrieving location..");
+                    // get user location
                     getUserLocation();
                 }
             }
         });
     }
 
+    // listeners for check box,
     public   void onCheckChangeListen(View view){
         checkList = "";
         switch (view.getId()){
@@ -186,11 +195,10 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
             }
 
         }
-        //Toast.makeText(getApplicationContext(),checkList,Toast.LENGTH_LONG).show();
     }
 
+    // once create meeting task is completed, show the response
     public void attemptCreateMeeting(){
-
         showError(false,"");
         if(validateInput()){
             mCMProgressBar.setVisibility(View.VISIBLE);
@@ -206,12 +214,14 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
 
     };
 
+    // hiding keyboard
     public void hideKeyboard(){
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
     }
 
+    // method to validate input
     private boolean validateInput(){
 
         if(datePicked == null){
@@ -227,9 +237,9 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
             showError(true,"Select at-least one meeting place");
             return false;
         }
-
         return  true;
     }
+
 
     private void showDatePickerDialog(View v){
         DialogFragment datePickerFragment = new DatePickerFragment();
@@ -250,31 +260,13 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
 
     }
 
+    // methos to display all errors
     private void showError(boolean show,String message){
         mCMErrorLinLayout.setVisibility(show ? View.VISIBLE : View.GONE);
         mCMErrorTv.setText(message);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_create_meeting, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-       /* if (id == R.id.action_settings) {
-            return true;
-        }*/
-        return super.onOptionsItemSelected(item);
-    }
-
+    // receive result of Creating meeting task
     @Override
     public void processFinish(String output) {
         mCMProgressBar.setVisibility(View.GONE);
@@ -294,6 +286,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
 
     }
 
+    // Date picker dialog fragment
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
@@ -317,6 +310,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
 
     }
 
+    // Time picker dialog fragment
     public static class TimePickerFragment extends DialogFragment
             implements TimePickerDialog.OnTimeSetListener {
 
@@ -340,6 +334,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
 
     }
 
+    // method to get user current location
     private void getUserLocation(){
         GetCurrentLocationTask gps;
         gps = new GetCurrentLocationTask(CreateMeetingActivity.this);
@@ -360,6 +355,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
         }
     }
 
+    // Alert dialog to display groupId from server
     private void showGroupId(final String msg){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 CreateMeetingActivity.this);
