@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 /**
- * Created by Sathvik on 08/04/15.
+ * User preferences holds information of the session username and location
  */
 public class UserPreferences {
 

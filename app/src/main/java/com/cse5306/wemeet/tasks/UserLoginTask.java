@@ -19,6 +19,10 @@ import java.util.List;
 /**
  * Created by Sathvik on 08/04/15.
  */
+
+/*
+* Asynctask that handles login task
+* */
 public class UserLoginTask extends AsyncTask<String,String,String> {
 
     public UserLoginTaskResponse response=null;

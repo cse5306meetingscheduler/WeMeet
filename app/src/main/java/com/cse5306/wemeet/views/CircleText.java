@@ -14,6 +14,9 @@ import com.cse5306.wemeet.R;
 /**
  * Created by Sathvik on 18/04/15.
  */
+/**
+ * Custom view to display group id the list
+ */
 public class CircleText extends View {
 
     String mText;

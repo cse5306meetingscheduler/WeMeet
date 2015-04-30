@@ -23,6 +23,9 @@ import java.util.List;
 /**
  * Created by Sathvik on 17/04/15.
  */
+/*
+* Asynctask that handles fetching restaurant task
+* */
 public class GetRestaurantListTask extends AsyncTask<String,String,List<Restaurant>> {
 
     List<Restaurant> restaurantList;

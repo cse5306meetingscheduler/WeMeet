@@ -20,6 +20,9 @@ import java.util.List;
 /**
  * Created by Sathvik on 21/04/15.
  */
+/*
+* Asynctask that handles deleting user hosted group
+* */
 public class DeleteGroupTask extends AsyncTask<String,String,String> {
 
     public DeleteGroupTaskResponse response = null;

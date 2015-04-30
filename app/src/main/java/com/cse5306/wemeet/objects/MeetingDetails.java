@@ -3,6 +3,11 @@ package com.cse5306.wemeet.objects;
 /**
  * Created by Sathvik on 16/04/15.
  */
+
+/*
+* Meeting details object that has info of a meeting
+* */
+
 public class MeetingDetails {
 
     int groupId;

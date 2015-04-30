@@ -20,6 +20,9 @@ import java.util.List;
 /**
  * Created by Sathvik on 14/04/15.
  */
+/*
+* Asynctask that handles join meeting task
+* */
 public class JoinMeetingTask extends AsyncTask<String, String, String>  {
 
     public JoinMeetingTaskResponse response = null;

@@ -1,8 +1,9 @@
 package com.cse5306.wemeet.objects;
 
 /**
- * Created by Sathvik on 17/04/15.
+ * holds information of each restaurant displayed in the suggestion list
  */
+
 public class Restaurant {
 
     int locId;

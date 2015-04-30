@@ -10,6 +10,9 @@ import android.util.Log;
 /**
  * Created by Sathvik on 08/04/15.
  */
+/*
+* Asynctask that handles getting user current location
+* */
 public class GetCurrentLocationTask implements LocationListener{
 
     Context context;

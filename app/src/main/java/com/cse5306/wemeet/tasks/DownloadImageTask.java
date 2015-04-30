@@ -16,6 +16,9 @@ import java.net.URL;
 /**
  * Created by Sathvik on 17/04/15.
  */
+/*
+* Asynctask that handles downloading the image that is to be displayed in the restaurant list
+* */
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
     private final WeakReference<ImageView> imageViewReference;

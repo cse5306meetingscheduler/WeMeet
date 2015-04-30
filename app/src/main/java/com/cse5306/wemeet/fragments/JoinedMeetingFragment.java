@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Sathvik on 12/04/15.
+ * Fragment that  displays user joined meeting list
  */
 public class JoinedMeetingFragment extends Fragment {
 

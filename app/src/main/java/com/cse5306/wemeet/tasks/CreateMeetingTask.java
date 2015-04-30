@@ -20,6 +20,9 @@ import java.util.List;
 /**
  * Created by Sathvik on 10/04/15.
  */
+/*
+* Asynctask that handles creating new meeting
+* */
 public class CreateMeetingTask extends AsyncTask<String,String,String> {
 
     public CreateMeetingTaskResponse response = null;

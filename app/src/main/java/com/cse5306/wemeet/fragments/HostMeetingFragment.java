@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Sathvik on 12/04/15.
+ * Fragment that  displays user hosted meeting list
  */
 public class HostMeetingFragment extends Fragment implements DeleteGroupTaskResponse {
 

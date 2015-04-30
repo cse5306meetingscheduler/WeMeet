@@ -19,6 +19,9 @@ import java.util.List;
 /**
  * Created by Sathvik on 19/04/15.
  */
+/*
+* Asynctask that handles fetching details of the final destination task
+* */
 public class DestinationDetailsTask extends AsyncTask<String,String,String> {
 
     public DestinationDetailsTaskResponse response = null;

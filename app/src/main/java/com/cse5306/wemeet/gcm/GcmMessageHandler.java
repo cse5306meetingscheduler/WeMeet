@@ -33,6 +33,7 @@ public class GcmMessageHandler extends IntentService {
         super("GcmMessageHandler");
     }
 
+    // handel the intent sent by the receiver
     @Override
     protected void onHandleIntent(Intent intent) {
         Bundle extras = intent.getExtras();
@@ -40,9 +41,8 @@ public class GcmMessageHandler extends IntentService {
         String messageType = gcm.getMessageType(intent);
 
         Intent intentActStart = null;
-
+        // check the type of data received
         String type = extras.getString("type");
-
 
         if(type.equalsIgnoreCase("1")){
             intentActStart = new Intent(this, UserHomeScreenActivity.class);
@@ -65,7 +65,6 @@ public class GcmMessageHandler extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("IntentService","intent");
     }
 
     // Creates notification based on title and body received
@@ -87,6 +86,7 @@ public class GcmMessageHandler extends IntentService {
         notificationManager.notify(0, n);
     }
 
+    // add event to the calender
     public void addToCalender(String recDate,String groupId){
         parserSDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date d=null;
@@ -100,7 +100,6 @@ public class GcmMessageHandler extends IntentService {
         long calID = 3;
         long startMillis = d.getTime();
         long endMillis = startMillis+60*60*1000;
-
 
         ContentResolver cr = getContentResolver();
         ContentValues values = new ContentValues();

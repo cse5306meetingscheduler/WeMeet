@@ -304,7 +304,7 @@ public class CreateMeetingActivity extends ActionBarActivity implements CreateMe
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
-            datePicked = String.valueOf(year)+"-"+String.valueOf(month)+"-"+String.valueOf(day);
+            datePicked = String.valueOf(year)+"-"+String.valueOf(month+1)+"-"+String.valueOf(day);
             mCMDate.setText(datePicked);
         }
 

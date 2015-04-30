@@ -20,6 +20,9 @@ import java.util.List;
 /**
  * Created by Sathvik on 07/04/15.
  */
+/*
+* Asynctask that handles registering new user
+* */
 public class RegisterTask extends AsyncTask<String,String,String> {
 
     public RegisterTaskResponse response;

@@ -23,6 +23,9 @@ import java.util.List;
 /**
  * Created by Sathvik on 16/04/15.
  */
+/*
+* Asynctask that handles fetching list of user meetings
+* */
 public class MeetingListTask extends AsyncTask<String, String,List<MeetingDetails>> {
 
     String username;
